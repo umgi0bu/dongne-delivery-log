@@ -131,6 +131,13 @@
     .requirement.bad strong { color:var(--red); }
     .requirement.deadline { grid-column:1/-1; }
     .shortage { margin:0 0 9px; color:var(--red); font-size:9px; font-weight:850; line-height:1.4; }
+    .selected-items { display:flex; gap:7px; margin:0 0 8px; padding:1px 0 2px; overflow-x:auto; scrollbar-width:none; }
+    .selected-items::-webkit-scrollbar { display:none; }
+    .selected-item { flex:0 0 auto; min-width:145px; display:grid; grid-template-columns:34px 1fr; gap:8px; align-items:center; padding:7px 9px; border:1px solid #cbd8d2; border-radius:12px; color:var(--ink); background:#fffdf8; text-align:left; cursor:pointer; }
+    .selected-item i { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#f4eee0; font-style:normal; font-size:19px; }
+    .selected-item b { display:block; max-width:120px; overflow:hidden; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+    .selected-item span { display:block; margin-top:2px; color:var(--teal); font-size:8px; font-weight:800; }
+    .selected-item:disabled { opacity:.6; cursor:default; }
     .cta { width:100%; min-height:47px; border:0; border-radius:13px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
     .cta:disabled { color:#8b9699; background:#d6dcda; cursor:not-allowed; }
     .end-btn { width:100%; margin-top:8px; border:1px solid var(--line); border-radius:12px; padding:10px; color:#64727a; background:transparent; font-size:10px; font-weight:800; cursor:pointer; }
@@ -330,7 +337,9 @@
     function setStatus(text,tone='normal'){el.status.querySelector('span').textContent=text;el.status.querySelector('i').style.background=tone==='bad'?'var(--red)':tone==='good'?'var(--gold)':'var(--teal)'}
     function renderOrders(){
       refreshOrders();const plan=estimatePlan(),energyShort=Math.max(0,plan.energy-state.energy),can=plan.orders.length&&!energyShort;
-      el.panel.innerHTML=`<button class="cta" id="deliver" ${can&&!isDelivering?'':'disabled'}>${isDelivering?'배달 중…':energyShort?`체력 ${energyShort} 부족 · 선택을 줄이세요`:plan.orders.length?`♥ ${plan.energy} 사용 · ${plan.orders.length}집 배달하기`:'지도에서 배달할 집을 선택하세요'}</button>`;
+      const selectedItems=plan.stops.flatMap(homeId=>selectedAt(homeId)).map(o=>`<button class="selected-item" data-selected-home="${o.home}" ${isDelivering?'disabled':''} aria-label="${o.title}, ${node(o.home).name} 주문 다시 보기"><i>${o.icon}</i><span><b>${o.title}</b><span>→ ${node(o.home).name}</span></span></button>`).join('');
+      el.panel.innerHTML=`${selectedItems?`<div class="selected-items" aria-label="선택한 배달 물품">${selectedItems}</div>`:''}<button class="cta" id="deliver" ${can&&!isDelivering?'':'disabled'}>${isDelivering?'배달 중…':energyShort?`체력 ${energyShort} 부족 · 선택을 줄이세요`:plan.orders.length?`♥ ${plan.energy} 사용 · ${plan.orders.length}집 배달하기`:'지도에서 배달할 집을 선택하세요'}</button>`;
+      el.panel.querySelectorAll('[data-selected-home]').forEach(button=>button.addEventListener('click',()=>{if(!isDelivering)showHouseOrders(button.dataset.selectedHome)}));
       $('deliver').addEventListener('click',deliver);
     }
     function renderGear(){el.panel.innerHTML=`<div class="panel-head"><h2>내 장비</h2><span>하루를 마칠 때 하나씩 획득</span></div><div class="gear-grid">${PERKS.map(p=>`<div class="gear ${state.perks.includes(p.id)?'':'locked'}"><i>${p.icon}</i><b>${p.name}</b><span>${state.perks.includes(p.id)?p.desc:'아직 획득하지 못했습니다.'}</span></div>`).join('')}</div>`}
