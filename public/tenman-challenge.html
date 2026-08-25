@@ -50,10 +50,13 @@
     .road { stroke:#8c999e; stroke-width:5; stroke-linecap:round; }
     .road.active { stroke:#f1a33a; stroke-width:7; }
     .map.delivering .road.active { stroke-dasharray:8 6; animation:road-flow .9s linear infinite; }
-    .node { position:absolute; z-index:2; width:49px; height:49px; transform:translate(-50%,-50%); border:0; border-radius:16px; color:#38515a; background:#fffdf8; box-shadow:0 5px 13px rgba(32,54,59,.16); cursor:pointer; }
-    .node .icon { display:block; font-size:19px; }
-    .node .name { position:absolute; left:50%; top:52px; transform:translateX(-50%); width:max-content; max-width:76px; color:#334c54; font-size:9px; font-weight:900; text-shadow:0 1px 3px #fff; }
-    .node.bottom-node .name { top:auto; bottom:52px; }
+    .node { position:absolute; z-index:2; width:62px; height:62px; padding:0; transform:translate(-50%,-50%); border:0; border-radius:18px; color:#38515a; background:transparent; cursor:pointer; }
+    .node .icon { display:block; width:100%; height:100%; font-size:19px; }
+    .node .icon img { display:block; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 5px 4px rgba(32,54,59,.24)); image-rendering:pixelated; }
+    .node.hub-node { width:70px; height:70px; }
+    .node .name { position:absolute; left:50%; top:61px; transform:translateX(-50%); width:max-content; max-width:82px; color:#334c54; font-size:9px; font-weight:900; text-shadow:0 1px 3px #fff,0 0 4px #fff; }
+    .node.hub-node .name { top:68px; }
+    .node.bottom-node .name { top:auto; bottom:61px; }
     .node.pickup { box-shadow:0 0 0 4px #4cbca6,0 5px 13px rgba(32,54,59,.16); }
     .node.dropoff { box-shadow:0 0 0 4px #f0a33c,0 5px 13px rgba(32,54,59,.16); }
     .node.selected-home { box-shadow:0 0 0 4px #f0a33c,0 5px 13px rgba(32,54,59,.16); }
@@ -233,13 +236,13 @@
     const el = { weather:$('weather'), dayText:$('dayText'), dayTrack:$('dayTrack'), time:$('time'), cash:$('cash'), energy:$('energy'), rep:$('rep'), map:$('map'), status:$('status'), panel:$('panel'), quickBackdrop:$('quickBackdrop'), quickSheet:$('quickSheet'), modalBackdrop:$('modalBackdrop'), modal:$('modal') };
     const SAVE_KEY = 'neighborhood-delivery-route-v2';
     const NODES = [
-      {id:'hub',kind:'hub',name:'배달상점',icon:'🏪',x:48,y:42},
-      {id:'haesol',kind:'home',type:'아파트',energy:2,name:'해솔아파트',icon:'🏢',x:15,y:12},
-      {id:'eunha',kind:'home',type:'빌라',energy:4,name:'은하빌라',icon:'🏠',x:38,y:12},
-      {id:'gaon',kind:'home',type:'오피스텔',energy:2,name:'가온오피스텔',icon:'🏙️',x:62,y:42},
-      {id:'pureun',kind:'home',type:'주택',energy:1,name:'푸른주택',icon:'🏡',x:82,y:63},
-      {id:'danpung',kind:'home',type:'아파트',energy:2,name:'단풍타운',icon:'🏘️',x:44,y:88},
-      {id:'neulbom',kind:'home',type:'주택',energy:1,name:'늘봄하우스',icon:'🏠',x:18,y:73},
+      {id:'hub',kind:'hub',name:'배달상점',icon:'🏪',sprite:'building-delivery-shop-sprite.png',x:48,y:42},
+      {id:'haesol',kind:'home',type:'아파트',energy:2,name:'해솔아파트',icon:'🏢',sprite:'building-apartment-sprite.png',x:15,y:12},
+      {id:'eunha',kind:'home',type:'빌라',energy:4,name:'은하빌라',icon:'🏠',sprite:'building-villa-sprite.png',x:38,y:12},
+      {id:'gaon',kind:'home',type:'오피스텔',energy:2,name:'가온오피스텔',icon:'🏙️',sprite:'building-officetel-sprite.png',x:62,y:42},
+      {id:'pureun',kind:'home',type:'주택',energy:1,name:'푸른주택',icon:'🏡',sprite:'building-house-sprite.png',x:82,y:63},
+      {id:'danpung',kind:'home',type:'아파트',energy:2,name:'단풍타운',icon:'🏘️',sprite:'building-apartment-sprite.png',x:44,y:88},
+      {id:'neulbom',kind:'home',type:'주택',energy:1,name:'늘봄하우스',icon:'🏠',sprite:'building-house-sprite.png',x:18,y:73},
       {id:'leftCorner',kind:'road',name:'왼쪽 골목 모서리',x:15,y:42},
       {id:'topJunction',kind:'road',name:'윗길 삼거리',x:38,y:42},
       {id:'midDown',kind:'road',name:'중앙 내리막',x:48,y:54},
@@ -329,7 +332,7 @@
     function renderMap(){
       const plan=estimatePlan(),p=node(state.location);activeRoute=plan.path;
       const lines=EDGES.map(([a,b])=>{const na=node(a),nb=node(b);return `<line class="road ${isActiveEdge(a,b)?'active':''}" x1="${na.x}%" y1="${na.y}%" x2="${nb.x}%" y2="${nb.y}%"/>`}).join('');
-      const buttons=NODES.filter(n=>n.kind!=='road').map(n=>{const count=n.id==='hub'?0:state.orders.filter(o=>o.home===n.id).length,selectedCount=n.id==='hub'?0:selectedAt(n.id).length,stopIndex=routeStops.indexOf(n.id);return `<button class="node ${n.y>78?'bottom-node':''} ${selectedCount?'selected-home':''}" data-node="${n.id}" style="left:${n.x}%;top:${n.y}%" aria-label="${n.name}${count?` 주문 ${count}건`:''}" ${isDelivering?'disabled':''}><span class="icon">${n.icon}</span><span class="name">${n.name}</span>${count?`<span class="order-badge">${selectedCount?`${selectedCount}/${count}`:count}</span>`:''}${stopIndex>=0?`<span class="stop-number">${stopIndex+1}</span>`:''}</button>`}).join('');
+      const buttons=NODES.filter(n=>n.kind!=='road').map(n=>{const count=n.id==='hub'?0:state.orders.filter(o=>o.home===n.id).length,selectedCount=n.id==='hub'?0:selectedAt(n.id).length,stopIndex=routeStops.indexOf(n.id);return `<button class="node ${n.kind==='hub'?'hub-node':''} ${n.y>78?'bottom-node':''} ${selectedCount?'selected-home':''}" data-node="${n.id}" style="left:${n.x}%;top:${n.y}%" aria-label="${n.name}${count?` 주문 ${count}건`:''}" ${isDelivering?'disabled':''}><span class="icon"><img src="${n.sprite}" alt="" aria-hidden="true"></span><span class="name">${n.name}</span>${count?`<span class="order-badge">${selectedCount?`${selectedCount}/${count}`:count}</span>`:''}${stopIndex>=0?`<span class="stop-number">${stopIndex+1}</span>`:''}</button>`}).join('');
       el.map.classList.toggle('delivering',isDelivering);el.map.innerHTML=`<svg class="roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${buttons}<div class="delivery-stage" id="deliveryStage"><div class="stage-track"><span data-step="0">상차</span><i></i><span data-step="1">경로</span><i></i><span data-step="2">배송</span><i></i><span data-step="3">완료</span></div><b id="stageTitle">주문 상차</b><small id="stageDetail">배달 가방을 준비하고 있습니다.</small></div><div class="player-marker ${isDelivering?'delivering':''}" style="left:${p.x}%;top:${p.y}%"><img src="courier-character.png" alt="현재 배달원 위치"><span class="cargo" aria-hidden="true"></span><span class="motion-mark" aria-hidden="true">››</span></div><span class="map-legend">집을 눌러 선택 · 숫자는 방문 순서</span>`;
       el.map.querySelectorAll('[data-node]').forEach(button=>button.addEventListener('click',()=>{if(isDelivering)return;const id=button.dataset.node;if(id==='hub'){setStatus('배달상점에서 선택한 주문을 한꺼번에 상차합니다.');return}showHouseOrders(id)}));
     }
