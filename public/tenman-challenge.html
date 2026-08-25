@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14283b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>동네 배달 일지</title>
+  <style>
+    :root {
+      --ink:#182634; --muted:#6e7a84; --paper:#f5f2e9; --card:#fffdf7;
+      --teal:#087f70; --teal-soft:#dff3ed; --orange:#ed7c3b; --gold:#dda52d;
+      --red:#c84e55; --line:#dedbd1; --road:#70808a; --shadow:0 18px 50px rgba(25,42,52,.16);
+    }
+    * { box-sizing:border-box; }
+    html,body { height:100%; overflow:hidden; }
+    body { margin:0; min-height:100svh; color:var(--ink); font-family:Pretendard,system-ui,-apple-system,"Segoe UI",sans-serif; background:linear-gradient(150deg,#dce9e4,#f7ebd8 58%,#dce8ef); overscroll-behavior:none; }
+    button { font:inherit; }
+    .shell { display:grid; place-items:center; width:100%; height:100svh; margin:auto; padding:16px; }
+    .app { display:flex; flex-direction:column; width:min(430px,calc(46.15svh - 15px),calc(100vw - 24px)); max-height:calc(100svh - 32px); aspect-ratio:9/19.5; overflow:hidden; background:rgba(255,253,247,.94); border:1px solid rgba(255,255,255,.9); border-radius:28px; box-shadow:var(--shadow); }
+    .topbar { display:none; }
+    .topline { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .eyebrow { display:none; }
+    h1 { margin:0; font-size:18px; letter-spacing:-.04em; }
+    .weather { padding:5px 8px; border-radius:9px; background:rgba(255,255,255,.13); font-size:10px; font-weight:800; white-space:nowrap; }
+    .dayline { display:flex; align-items:center; justify-content:flex-start; gap:6px; margin-top:3px; color:#d8ede9; font-size:9px; }
+    .dayline > span:last-child::before { content:"· "; }
+    .daytrack { display:none; }
+    .daydot { height:5px; border-radius:99px; background:rgba(255,255,255,.18); }
+    .daydot.done { background:#f6c153; }
+    .daydot.current { background:white; }
+    .stats { display:none; }
+    .gamebar { flex:0 0 auto; display:grid; grid-template-columns:1fr 92px; min-height:54px; color:white; background:#14283b; }
+    .game-summary { display:flex; align-items:center; gap:8px; padding:8px 11px; border-right:1px solid rgba(255,255,255,.14); }
+    .game-summary span,.game-summary strong { padding:7px 9px; border-radius:10px; background:rgba(255,255,255,.1); font-size:12px; white-space:nowrap; }
+    .game-summary strong { overflow:hidden; text-overflow:ellipsis; }
+    .home-button { margin:7px; border:0; border-radius:11px; color:#14283b; background:#f4c45b; font-size:12px; font-weight:900; cursor:pointer; }
+    .home-button:disabled { opacity:.45; cursor:not-allowed; }
+    .stat { min-width:0; padding:6px 4px; text-align:center; background:var(--card); }
+    .stat span { display:block; margin-bottom:1px; color:var(--muted); font-size:8px; }
+    .stat strong { display:block; overflow:hidden; color:var(--ink); font-size:12px; letter-spacing:-.04em; text-overflow:ellipsis; white-space:nowrap; }
+    .map-wrap { position:relative; flex:1 1 auto; min-height:0; margin:0; overflow:hidden; border-radius:0; background:#d7e5df; }
+    .map { position:relative; width:100%; height:100%; min-height:270px; overflow:hidden; }
+    .map::before { content:""; position:absolute; inset:0; opacity:.32; background:linear-gradient(90deg,transparent 49%,rgba(255,255,255,.9) 50%,transparent 51%),linear-gradient(transparent 49%,rgba(255,255,255,.75) 50%,transparent 51%); background-size:54px 54px; }
+    .map-hud { position:absolute; left:10px; right:10px; top:10px; z-index:11; display:flex; justify-content:space-between; pointer-events:none; }
+    .map-hud span { padding:7px 10px; border-radius:11px; color:white; background:rgba(20,40,59,.88); box-shadow:0 5px 14px rgba(20,40,59,.18); font-size:12px; font-weight:900; backdrop-filter:blur(7px); }
+    .map.delivering .map-hud { opacity:0; }
+    .roads { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .road { stroke:#8c999e; stroke-width:5; stroke-linecap:round; }
+    .road.active { stroke:#f1a33a; stroke-width:7; }
+    .map.delivering .road.active { stroke-dasharray:8 6; animation:road-flow .9s linear infinite; }
+    .node { position:absolute; z-index:2; width:49px; height:49px; transform:translate(-50%,-50%); border:0; border-radius:16px; color:#38515a; background:#fffdf8; box-shadow:0 5px 13px rgba(32,54,59,.16); cursor:pointer; }
+    .node .icon { display:block; font-size:19px; }
+    .node .name { position:absolute; left:50%; top:52px; transform:translateX(-50%); width:max-content; max-width:76px; color:#334c54; font-size:9px; font-weight:900; text-shadow:0 1px 3px #fff; }
+    .node.bottom-node .name { top:auto; bottom:52px; }
+    .node.pickup { box-shadow:0 0 0 4px #4cbca6,0 5px 13px rgba(32,54,59,.16); }
+    .node.dropoff { box-shadow:0 0 0 4px #f0a33c,0 5px 13px rgba(32,54,59,.16); }
+    .node.selected-home { box-shadow:0 0 0 4px #f0a33c,0 5px 13px rgba(32,54,59,.16); }
+    .node.visited { animation:node-arrival .7s ease; }
+    .order-badge { position:absolute; right:-5px; top:-6px; display:grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border-radius:99px; color:white; background:var(--teal); box-shadow:0 2px 6px rgba(24,38,52,.2); font-size:9px; font-weight:900; }
+    .stop-number { position:absolute; left:-6px; top:-7px; display:grid; place-items:center; width:22px; height:22px; border-radius:50%; color:white; background:var(--orange); box-shadow:0 2px 6px rgba(24,38,52,.2); font-size:10px; font-weight:900; }
+    .player-marker { position:absolute; z-index:4; width:43px; height:64px; transform:translate(-50%,-72%); transition:left .48s cubic-bezier(.2,.75,.25,1),top .48s cubic-bezier(.2,.75,.25,1); pointer-events:none; }
+    .player-marker img { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 5px 4px rgba(24,38,52,.3)); transform-origin:50% 88%; }
+    .player-marker.west img { transform:scaleX(-1); }
+    .player-marker.delivering img { animation:courier-step .34s ease-in-out infinite alternate; }
+    .player-marker.delivering { z-index:8; width:50px; height:75px; }
+    .cargo { position:absolute; right:-17px; top:2px; display:grid; place-items:center; width:29px; height:29px; border-radius:10px; background:white; box-shadow:0 4px 12px rgba(24,38,52,.25); font-size:16px; opacity:0; transform:scale(.65); transition:.2s ease; }
+    .player-marker.carrying .cargo { opacity:1; transform:scale(1); }
+    .player-marker.handoff .cargo { color:white; background:var(--teal); animation:handoff-pop .5s ease; }
+    .motion-mark { position:absolute; left:-10px; bottom:5px; color:white; font-size:14px; font-weight:900; opacity:0; text-shadow:0 2px 4px rgba(24,38,52,.55); }
+    .player-marker.delivering .motion-mark { opacity:1; animation:motion-fade .55s ease infinite; }
+    .map-legend { position:absolute; right:8px; bottom:8px; z-index:5; padding:6px 8px; border-radius:9px; color:#52636a; background:rgba(255,253,247,.88); font-size:8px; font-weight:800; }
+    .map.delivering .map-legend { opacity:0; }
+    .delivery-stage { position:absolute; left:50%; top:8px; z-index:10; display:none; width:min(290px,calc(100% - 16px)); transform:translateX(-50%); padding:9px 11px; border-radius:13px; color:white; background:rgba(20,40,59,.9); box-shadow:0 8px 24px rgba(20,40,59,.22); backdrop-filter:blur(8px); text-align:center; }
+    .map.delivering .delivery-stage { display:block; }
+    .stage-track { display:flex; align-items:center; justify-content:center; gap:5px; margin-bottom:5px; }
+    .stage-track span { color:#93aaa9; font-size:8px; font-weight:900; }
+    .stage-track span.active { color:#fff; }
+    .stage-track span.done { color:#f4c45b; }
+    .stage-track i { width:15px; height:2px; background:#526872; }
+    .stage-track i.done { background:#f4c45b; }
+    .delivery-stage b { display:block; font-size:12px; }
+    .delivery-stage small { display:block; margin-top:2px; color:#cfe0de; font-size:9px; }
+    @keyframes road-flow { to { stroke-dashoffset:-14; } }
+    @keyframes courier-step { from { transform:translateY(0) rotate(-1.5deg); } to { transform:translateY(-4px) rotate(1.5deg); } }
+    @keyframes motion-fade { 0% { transform:translateX(6px); opacity:0; } 40% { opacity:1; } 100% { transform:translateX(-5px); opacity:0; } }
+    @keyframes handoff-pop { 0% { transform:scale(.5); } 65% { transform:scale(1.25); } 100% { transform:scale(1); } }
+    @keyframes node-arrival { 0% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(1.22); } 100% { transform:translate(-50%,-50%) scale(1); } }
+    .status { display:none; }
+    .status i { flex:0 0 8px; width:8px; height:8px; border-radius:50%; background:var(--teal); }
+    .tabs { display:none; }
+    .tab { border:0; border-radius:8px; padding:6px; color:var(--muted); background:transparent; font-size:10px; font-weight:850; cursor:pointer; }
+    .tab.active { color:var(--ink); background:white; box-shadow:0 2px 8px rgba(28,42,48,.09); }
+    .panel { flex:0 0 auto; min-height:0; overflow:visible; padding:10px 10px calc(10px + env(safe-area-inset-bottom)); background:var(--card); }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
+    .panel-head h2 { margin:0; font-size:16px; letter-spacing:-.04em; }
+    .panel-head span { color:var(--muted); font-size:9px; }
+    .orders { display:grid; gap:8px; }
+    .planner-empty { padding:20px 14px; border:1px dashed #bdc8c3; border-radius:16px; color:var(--muted); background:#f5f6f1; text-align:center; font-size:11px; line-height:1.55; }
+    .route-stops { display:grid; gap:7px; }
+    .route-stop { display:grid; grid-template-columns:32px 1fr auto; gap:9px; align-items:center; padding:10px; border-radius:14px; background:white; box-shadow:inset 0 0 0 1px var(--line); }
+    .route-index { display:grid; place-items:center; width:30px; height:30px; border-radius:10px; color:white; background:var(--orange); font-size:12px; font-weight:900; }
+    .route-stop b { display:block; font-size:11px; }
+    .route-stop span { color:var(--muted); font-size:8px; }
+    .route-actions { display:grid; grid-template-columns:repeat(2,27px); gap:3px; }
+    .route-actions button { width:27px; height:27px; border:0; border-radius:8px; color:#496068; background:#e9efec; font-size:11px; font-weight:900; cursor:pointer; }
+    .route-actions button:disabled { opacity:.3; cursor:default; }
+    .order { width:100%; display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:11px; border:1px solid var(--line); border-radius:15px; color:var(--ink); background:white; text-align:left; cursor:pointer; }
+    .order.selected { border-color:var(--teal); box-shadow:0 0 0 2px rgba(8,127,112,.16); background:#f7fffc; }
+    .order-icon { display:grid; place-items:center; width:39px; height:39px; border-radius:12px; background:#f4eee0; font-size:21px; }
+    .order b { display:block; margin-bottom:4px; font-size:12px; }
+    .route { display:block; color:var(--muted); font-size:9px; }
+    .order-cost { display:block; margin-top:4px; color:#526870; font-size:9px; font-weight:800; }
+    .order.unavailable { background:#f7f3f1; }
+    .order.unavailable .order-cost { color:var(--red); }
+    .order-pay { text-align:right; }
+    .order-pay strong { display:block; color:var(--teal); font-size:12px; }
+    .order-pay small { color:var(--red); font-size:8px; }
+    .actionbox { margin:0; padding:0; background:transparent; }
+    .estimate { display:flex; justify-content:space-between; gap:8px; margin-bottom:9px; color:#4a5e65; font-size:9px; }
+    .energy-effect { display:flex; justify-content:space-between; align-items:center; margin:0 0 9px; padding:8px 9px; border-radius:10px; color:#076d62; background:#dff6ef; box-shadow:inset 0 0 0 1px rgba(8,127,112,.16); font-size:9px; font-weight:850; }
+    .energy-effect strong { color:var(--teal); }
+    .energy-effect.weather-effect { color:#7b5415; background:#fff0cc; box-shadow:inset 0 0 0 1px rgba(194,127,23,.18); }
+    .energy-effect.weather-effect strong { color:#a9680b; }
+    .requirements { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:9px; }
+    .requirement { padding:9px; border-radius:11px; background:white; box-shadow:inset 0 0 0 1px #d8e4df; }
+    .requirement span { display:block; margin-bottom:3px; color:var(--muted); font-size:8px; }
+    .requirement strong { display:block; color:var(--teal); font-size:11px; }
+    .requirement.bad { background:#fff1f1; box-shadow:inset 0 0 0 1px #e9b8bb; }
+    .requirement.bad strong { color:var(--red); }
+    .requirement.deadline { grid-column:1/-1; }
+    .shortage { margin:0 0 9px; color:var(--red); font-size:9px; font-weight:850; line-height:1.4; }
+    .cta { width:100%; min-height:47px; border:0; border-radius:13px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
+    .cta:disabled { color:#8b9699; background:#d6dcda; cursor:not-allowed; }
+    .end-btn { width:100%; margin-top:8px; border:1px solid var(--line); border-radius:12px; padding:10px; color:#64727a; background:transparent; font-size:10px; font-weight:800; cursor:pointer; }
+    .gear-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .gear { min-height:95px; padding:12px; border-radius:15px; background:#f2f0e9; }
+    .gear.locked { opacity:.48; filter:grayscale(1); }
+    .gear i { font-style:normal; font-size:22px; }
+    .gear b { display:block; margin:6px 0 3px; font-size:11px; }
+    .gear span { color:var(--muted); font-size:9px; line-height:1.35; }
+    .goalbox { padding:14px; border-radius:17px; color:white; background:linear-gradient(135deg,#1a3a4b,#0e766b); }
+    .goalrow { display:flex; justify-content:space-between; gap:10px; font-size:11px; }
+    .goalrow strong { font-size:17px; }
+    .progress { height:9px; margin-top:10px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.18); }
+    .progress i { display:block; height:100%; border-radius:inherit; background:#f4c45b; }
+    .log { display:grid; gap:6px; margin-top:10px; }
+    .log p { margin:0; padding:8px 9px; border-radius:10px; color:#53646a; background:#f3f1eb; font-size:9px; }
+    .reset { margin-top:10px; border:0; color:#a44c51; background:transparent; font-size:9px; text-decoration:underline; cursor:pointer; }
+    .disclaimer { display:none; }
+    .tap-hint { display:block; margin-top:5px; color:var(--teal); font-size:8px; font-weight:900; }
+    .quick-backdrop { position:fixed; inset:0; z-index:15; display:none; place-items:end center; padding:14px 10px calc(14px + env(safe-area-inset-bottom)); background:rgba(10,22,30,.3); backdrop-filter:blur(2px); }
+    .quick-backdrop.show { display:grid; }
+    .quick-sheet { width:min(500px,100%); padding:16px; border-radius:22px; background:#fffdf7; box-shadow:0 18px 55px rgba(15,29,38,.3); animation:quick-rise .22s ease-out; }
+    .quick-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+    .quick-title { display:flex; gap:10px; align-items:center; }
+    .quick-title i { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:#f4eee0; font-style:normal; font-size:23px; }
+    .quick-title b { display:block; font-size:14px; }
+    .quick-title span { color:var(--muted); font-size:9px; }
+    .quick-close { width:34px; height:34px; border:0; border-radius:11px; color:#66757a; background:#eeece5; font-size:18px; cursor:pointer; }
+    .quick-facts { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:12px 0; }
+    .quick-fact { padding:9px 5px; border-radius:11px; background:#f0f4f1; text-align:center; }
+    .quick-fact span { display:block; color:var(--muted); font-size:8px; }
+    .quick-fact strong { display:block; margin-top:3px; font-size:11px; }
+    .quick-warning { margin:0 0 9px; color:var(--red); font-size:9px; font-weight:850; text-align:center; }
+    .house-orders { display:grid; gap:7px; margin:12px 0; }
+    .house-order { width:100%; display:grid; grid-template-columns:auto 1fr auto; gap:9px; align-items:center; padding:10px; border:1px solid var(--line); border-radius:13px; color:var(--ink); background:white; text-align:left; cursor:pointer; }
+    .house-order.selected { border-color:var(--teal); background:#edfaf6; box-shadow:0 0 0 2px rgba(8,127,112,.12); }
+    .house-order i { font-style:normal; font-size:21px; }
+    .house-order b { display:block; font-size:10px; }
+    .house-order span { color:var(--muted); font-size:8px; }
+    .house-order strong { color:var(--red); font-size:10px; white-space:nowrap; }
+    .quick-accept { width:100%; min-height:52px; border:0; border-radius:14px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
+    .quick-accept:disabled { color:#8b9699; background:#d6dcda; cursor:not-allowed; }
+    .modal-backdrop { position:fixed; inset:0; z-index:20; display:none; place-items:end center; padding:18px 12px calc(18px + env(safe-area-inset-bottom)); background:rgba(10,22,30,.58); backdrop-filter:blur(5px); }
+    .modal-backdrop.show { display:grid; }
+    .modal { width:min(480px,100%); max-height:86vh; overflow:auto; padding:20px; border-radius:24px; background:#fffdf7; box-shadow:var(--shadow); }
+    .modal-kicker { margin:0 0 6px; color:var(--teal); font-size:10px; font-weight:900; letter-spacing:.08em; }
+    .modal h2 { margin:0; font-size:22px; letter-spacing:-.05em; }
+    .modal-copy { margin:10px 0 16px; color:#5e6d73; font-size:12px; line-height:1.6; white-space:pre-line; }
+    .home-screen-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .home-screen-head h2 { margin:0; }
+    .home-screen h3 { margin:15px 0 7px; font-size:13px; }
+    .home-screen .gear-grid { grid-template-columns:repeat(2,1fr); }
+    .home-screen .gear { min-height:82px; padding:10px; }
+    .home-resume { width:100%; min-height:48px; margin-top:14px; border:0; border-radius:14px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
+    .choices { display:grid; gap:8px; }
+    .choice { width:100%; padding:13px; border:1px solid var(--line); border-radius:15px; color:var(--ink); background:white; text-align:left; cursor:pointer; }
+    .choice.primary { color:white; border-color:var(--teal); background:var(--teal); }
+    .choice b { display:block; margin-bottom:3px; font-size:12px; }
+    .choice span { color:inherit; opacity:.72; font-size:9px; line-height:1.4; }
+    .ending { text-align:center; }
+    .ending-icon { font-size:48px; }
+    @keyframes quick-rise { from { transform:translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+    @media (max-width:390px) { .node { width:43px; height:43px; border-radius:14px; } .node .name { top:46px; } }
+    @media (max-width:500px) { body { background:var(--paper); } .shell { height:100svh; padding:0; } .app { width:100vw; height:100svh; max-height:none; aspect-ratio:auto; border:0; border-radius:0; box-shadow:none; padding-bottom:env(safe-area-inset-bottom); } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="app" aria-label="동네 배달 경영 게임">
+      <header class="topbar">
+        <div class="topline"><div><p class="eyebrow">7-DAY DELIVERY ROGUELIKE</p><h1>동네 배달 일지</h1></div><div class="weather" id="weather">☀️ 맑음</div></div>
+        <div class="dayline"><span id="dayText">1일차</span><div class="daytrack" id="dayTrack"></div><span>7일 캠페인</span></div>
+      </header>
+      <section class="stats" aria-live="polite">
+        <div class="stat"><span>완료한 주문</span><strong id="time">0건</strong></div>
+        <div class="stat"><span>오늘 순수익</span><strong id="cash">0원</strong></div>
+        <div class="stat"><span>체력</span><strong id="energy">♥ 10</strong></div>
+        <div class="stat"><span>평판</span><strong id="rep">★ 3</strong></div>
+      </section>
+      <section class="gamebar" aria-label="게임 정보와 홈 메뉴"><div class="game-summary"><span id="gameEnergy">♥ 10</span><strong id="gameCash">0원</strong></div><button class="home-button" id="homeButton">🏠 홈</button></section>
+      <div class="map-wrap"><div class="map" id="map" aria-label="동네 배달 지도"></div></div>
+      <div class="status" id="status"><i></i><span>주문을 골라 오늘의 영업을 시작하세요.</span></div>
+      <nav class="tabs" aria-label="게임 메뉴"><button class="tab active" data-tab="orders">주문</button><button class="tab" data-tab="gear">장비</button><button class="tab" data-tab="log">일지</button></nav>
+      <section class="panel" id="panel"></section>
+      <p class="disclaimer">게임 속 수익은 가상 수치이며 실제 현금으로 출금하거나 환전할 수 없습니다.</p>
+    </section>
+  </main>
+  <div class="quick-backdrop" id="quickBackdrop"><section class="quick-sheet" id="quickSheet" role="dialog" aria-modal="true" aria-label="가정별 주문 선택"></section></div>
+  <div class="modal-backdrop" id="modalBackdrop"><section class="modal" id="modal" role="dialog" aria-modal="true" aria-live="polite"></section></div>
+  <script>
+  (() => {
+    const $ = id => document.getElementById(id);
+    const el = { weather:$('weather'), dayText:$('dayText'), dayTrack:$('dayTrack'), time:$('time'), cash:$('cash'), energy:$('energy'), rep:$('rep'), map:$('map'), status:$('status'), panel:$('panel'), quickBackdrop:$('quickBackdrop'), quickSheet:$('quickSheet'), modalBackdrop:$('modalBackdrop'), modal:$('modal') };
+    const SAVE_KEY = 'neighborhood-delivery-route-v2';
+    const NODES = [
+      {id:'hub',kind:'hub',name:'배달상점',icon:'🏪',x:48,y:42},
+      {id:'haesol',kind:'home',type:'아파트',energy:2,name:'해솔아파트',icon:'🏢',x:15,y:12},
+      {id:'eunha',kind:'home',type:'빌라',energy:4,name:'은하빌라',icon:'🏠',x:38,y:12},
+      {id:'gaon',kind:'home',type:'오피스텔',energy:2,name:'가온오피스텔',icon:'🏙️',x:62,y:42},
+      {id:'pureun',kind:'home',type:'주택',energy:1,name:'푸른주택',icon:'🏡',x:82,y:63},
+      {id:'danpung',kind:'home',type:'아파트',energy:2,name:'단풍타운',icon:'🏘️',x:44,y:88},
+      {id:'neulbom',kind:'home',type:'주택',energy:1,name:'늘봄하우스',icon:'🏠',x:18,y:73},
+      {id:'leftCorner',kind:'road',name:'왼쪽 골목 모서리',x:15,y:42},
+      {id:'topJunction',kind:'road',name:'윗길 삼거리',x:38,y:42},
+      {id:'midDown',kind:'road',name:'중앙 내리막',x:48,y:54},
+      {id:'lowerJunction',kind:'road',name:'아랫길 교차로',x:46,y:71},
+      {id:'rightCorner',kind:'road',name:'오른쪽 골목 모서리',x:61,y:62}
+    ];
+    const EDGES = [
+      ['haesol','leftCorner',2],['leftCorner','topJunction',3],['eunha','topJunction',2],['topJunction','hub',1],
+      ['hub','gaon',1],['gaon','rightCorner',2],['rightCorner','pureun',2],
+      ['hub','midDown',1],['midDown','lowerJunction',2],['lowerJunction','danpung',2],['neulbom','lowerJunction',2]
+    ];
+    const WEATHER = [
+      {id:'sunny',label:'☀️ 맑음',desc:'쾌적한 동네 풍경'},
+      {id:'rain',label:'🌧️ 비',desc:'빗소리가 나는 동네 풍경'},
+      {id:'heat',label:'🥵 한여름',desc:'햇볕이 강한 동네 풍경'},
+      {id:'cold',label:'🌬️ 바람',desc:'바람 부는 동네 풍경'}
+    ];
+    const ORDER_TEMPLATES = [
+      {kind:'coffee',icon:'☕',title:'커피와 샌드위치',base:11000,service:4,weight:1},
+      {kind:'lunch',icon:'🍱',title:'점심 도시락',base:15000,service:5,weight:2},
+      {kind:'parcel',icon:'📦',title:'생활용품 택배',base:18000,service:5,weight:2},
+      {kind:'grocery',icon:'🛍️',title:'장보기 꾸러미',base:14500,service:6,weight:3},
+      {kind:'medicine',icon:'💊',title:'약국 심부름',base:20000,service:4,weight:1},
+      {kind:'flower',icon:'💐',title:'꽃다발 선물',base:19500,service:5,weight:1}
+    ];
+    const PERKS = [
+      {id:'ebike',icon:'🚲',name:'전기 자전거',desc:'한 집당 필요 체력이 1 감소합니다. 집별 최소 소모는 1입니다.'},
+      {id:'raincoat',icon:'🥤',name:'보냉 물통',desc:'매일 시작 체력이 1 증가합니다.'},
+      {id:'bag',icon:'🎒',name:'보온 배달 가방',desc:'모든 주문 보상이 10% 증가합니다.'},
+      {id:'regulars',icon:'🤝',name:'단골 명단',desc:'팁을 받을 확률이 15% 증가합니다.'},
+      {id:'shortcut',icon:'🗺️',name:'골목길 지도',desc:'익숙한 길을 이용해 이동 체력이 1 감소합니다.'},
+      {id:'snack',icon:'🥪',name:'든든한 간식',desc:'매일 시작 체력이 2 증가합니다.'}
+    ];
+    const EVENTS = [
+      {title:'엘리베이터 점검 중',copy:'고객은 14층에 있습니다. 계단으로 올라가면 바로 전달할 수 있어요.',choices:[
+        {label:'계단으로 올라간다',detail:'체력 -2 · 팁 +4,000원',effect:s=>{s.energy-=2;s.cash+=4000;s.dayGross+=4000;addLog('14층 계단 배달로 4,000원 팁을 받았다.')}},
+        {label:'고객에게 내려와 달라고 한다',detail:'체력 유지 · 평판 -1 가능',effect:s=>{if(Math.random()<.45)s.rep=Math.max(0,s.rep-1);addLog('고객에게 1층 수령을 부탁했다.')}}]},
+      {title:'고객이 전화를 받지 않는다',copy:'문 앞에 둘지, 조금 더 연락해 볼지 결정해야 합니다.',choices:[
+        {label:'주변을 돌고 다시 온다',detail:'체력 -1 · 평판 +1',effect:s=>{s.energy-=1;s.rep=Math.min(10,s.rep+1);addLog('한 바퀴 돌아 다시 방문해 정확히 전달했다.')}},
+        {label:'사진을 찍고 문 앞에 둔다',detail:'체력 유지 · 평판 -1 가능',effect:s=>{if(Math.random()<.45)s.rep=Math.max(0,s.rep-1);addLog('사진을 남기고 문 앞에 전달했다.')}}]},
+      {title:'자전거 체인이 빠졌다',copy:'바로 수리할 수 있지만 오늘 수익에서 비용이 나갑니다.',choices:[
+        {label:'근처 수리점에 맡긴다',detail:'비용 5,000원',effect:s=>{s.cash-=5000;s.dayExpense+=5000;addLog('자전거 수리비 5,000원을 지출했다.')}},
+        {label:'끌고 걸어간다',detail:'체력 -2',effect:s=>{s.energy-=2;addLog('자전거를 끌고 이동해 체력을 2 소모했다.')}}]},
+      {title:'단골 카페의 호의',copy:'사장님이 따뜻한 음료를 건넵니다.',choices:[
+        {label:'잠깐 쉬며 마신다',detail:'체력 +3',effect:s=>{s.energy=Math.min(14,s.energy+3);addLog('카페에서 쉬며 체력을 회복했다.')}},
+        {label:'감사 인사만 하고 출발',detail:'평판 +1',effect:s=>{s.rep=Math.min(10,s.rep+1);addLog('빠르게 출발해 신뢰를 얻었다.')}}]}
+    ];
+    let state, activeTab='orders', selectedOrders=[], routeStops=[], activeRoute=[], isDelivering=false;
+
+    const freshState = () => ({day:1,time:480,cash:0,energy:10,rep:3,location:'hub',weather:'sunny',orders:[],perks:[],dayGross:0,dayExpense:0,totalNet:0,totalCompleted:0,completedToday:0,failedToday:0,log:['배달상점에서 첫 출근을 준비했다.'],ended:false});
+    const money = n => `${Math.round(n).toLocaleString('ko-KR')}원`;
+    const clock = minutes => `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;
+    const node = id => NODES.find(n=>n.id===id);
+    const weather = () => WEATHER.find(w=>w.id===state.weather) || WEATHER[0];
+    const weatherEnergyCost = () => 0;
+    function saveGame(){localStorage.setItem(SAVE_KEY,JSON.stringify(state))}
+    function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);return raw?{...freshState(),...JSON.parse(raw)}:null}catch{return null}}
+    function addLog(text){state.log=[text,...(state.log||[])].slice(0,16)}
+    function choose(arr){return arr[Math.floor(Math.random()*arr.length)]}
+    function shortest(from,to){
+      const dist={},prev={},unvisited=new Set(NODES.map(n=>n.id));NODES.forEach(n=>dist[n.id]=Infinity);dist[from]=0;
+      while(unvisited.size){let current=[...unvisited].sort((a,b)=>dist[a]-dist[b])[0];if(current===to||dist[current]===Infinity)break;unvisited.delete(current);EDGES.forEach(([a,b,w])=>{let next=null;if(a===current)next=b;if(b===current)next=a;if(next&&unvisited.has(next)&&dist[current]+w<dist[next]){dist[next]=dist[current]+w;prev[next]=current}})}
+      const path=[];let cur=to;while(cur){path.unshift(cur);if(cur===from)break;cur=prev[cur]}return {distance:dist[to],path};
+    }
+    function edgeKey(a,b){return [a,b].sort().join('|')}
+    function isActiveEdge(a,b){for(let i=0;i<activeRoute.length-1;i++)if(edgeKey(activeRoute[i],activeRoute[i+1])===edgeKey(a,b))return true;return false}
+    const homes=()=>NODES.filter(n=>n.kind==='home');
+    const selectedObjects=()=>state.orders.filter(o=>selectedOrders.includes(o.id));
+    const selectedAt=homeId=>selectedObjects().filter(o=>o.home===homeId);
+    function newOrder(homeId=choose(homes()).id){const t=choose(ORDER_TEMPLATES),reward=Math.round(t.base/500)*500;return {id:`o${Date.now()}${Math.random().toString(16).slice(2)}`,home:homeId,kind:t.kind,icon:t.icon,title:t.title,reward,service:t.service,weight:t.weight,urgent:false}}
+    function refreshOrders(){
+      const selectedSet=new Set(selectedOrders),seenHomes=new Set();state.orders=(state.orders||[]).filter(o=>Boolean(node(o.home))).map(o=>({...o,title:(o.title||'주문').replace(/^긴급 · /,''),urgent:false})).sort((a,b)=>Number(selectedSet.has(b.id))-Number(selectedSet.has(a.id))).filter(o=>{if(seenHomes.has(o.home))return false;seenHomes.add(o.home);return true});selectedOrders=selectedOrders.filter(id=>state.orders.some(o=>o.id===id));routeStops=routeStops.filter(home=>selectedAt(home).length);
+      homes().forEach(home=>{if(!state.orders.some(o=>o.home===home.id))state.orders.push(newOrder(home.id))})
+    }
+    function estimatePlan(){
+      const orders=selectedObjects(),has=id=>state.perks.includes(id);if(!orders.length)return {orders:[],stops:[],path:[],legs:[],minutes:0,energy:0,baseEnergy:0,ebikeSaved:0,weatherExtra:0,reward:0,expense:0,net:0,late:[],arrivals:{},distance:0};
+      const stops=routeStops.filter(home=>orders.some(o=>o.home===home)),legs=[];let current=state.location,fullPath=[current],elapsed=0,distance=0,arrivals={};
+      const factor=has('shortcut') ? .85 : 1;
+      const addLeg=(to,type)=>{const r=shortest(current,to),travel=Math.ceil(r.distance*9*factor);elapsed+=travel;distance+=r.distance;fullPath.push(...r.path.slice(1));legs.push({from:current,to,path:r.path,distance:r.distance,type});current=to};
+      if(current!=='hub')addLeg('hub','return');elapsed+=6+orders.length*2;
+      stops.forEach(home=>{addLeg(home,'delivery');const service=5+selectedAt(home).reduce((s,o)=>s+o.service,0);elapsed+=service;arrivals[home]=state.time+elapsed});
+      if(current!=='hub')addLeg('hub','finish');
+      const baseEnergy=stops.reduce((sum,home)=>sum+(node(home).energy||1),0);let energy=baseEnergy,ebikeSaved=0;if(has('ebike')){energy=stops.reduce((sum,home)=>sum+Math.max(1,(node(home).energy||1)-1),0);ebikeSaved=baseEnergy-energy}if(has('shortcut'))energy=Math.max(1,energy-1);const weatherExtra=weatherEnergyCost();energy+=weatherExtra;
+      let reward=orders.reduce((s,o)=>s+o.reward,0);if(has('bag'))reward*=1.1;reward=Math.round(reward/500)*500;const expense=distance*650,net=reward-expense,minutes=Math.ceil(elapsed/5)*5,late=[];
+      return {orders,stops,path:fullPath,legs,minutes,energy,baseEnergy,ebikeSaved,weatherExtra,reward,expense,net,late,arrivals,distance}
+    }
+    function renderMap(){
+      const plan=estimatePlan(),p=node(state.location);activeRoute=plan.path;
+      const lines=EDGES.map(([a,b])=>{const na=node(a),nb=node(b);return `<line class="road ${isActiveEdge(a,b)?'active':''}" x1="${na.x}%" y1="${na.y}%" x2="${nb.x}%" y2="${nb.y}%"/>`}).join('');
+      const buttons=NODES.filter(n=>n.kind!=='road').map(n=>{const count=n.id==='hub'?0:state.orders.filter(o=>o.home===n.id).length,selectedCount=n.id==='hub'?0:selectedAt(n.id).length,stopIndex=routeStops.indexOf(n.id);return `<button class="node ${n.y>78?'bottom-node':''} ${selectedCount?'selected-home':''}" data-node="${n.id}" style="left:${n.x}%;top:${n.y}%" aria-label="${n.name}${count?` 주문 ${count}건`:''}" ${isDelivering?'disabled':''}><span class="icon">${n.icon}</span><span class="name">${n.name}</span>${count?`<span class="order-badge">${selectedCount?`${selectedCount}/${count}`:count}</span>`:''}${stopIndex>=0?`<span class="stop-number">${stopIndex+1}</span>`:''}</button>`}).join('');
+      el.map.classList.toggle('delivering',isDelivering);el.map.innerHTML=`<svg class="roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${buttons}<div class="delivery-stage" id="deliveryStage"><div class="stage-track"><span data-step="0">상차</span><i></i><span data-step="1">경로</span><i></i><span data-step="2">배송</span><i></i><span data-step="3">완료</span></div><b id="stageTitle">주문 상차</b><small id="stageDetail">배달 가방을 준비하고 있습니다.</small></div><div class="player-marker ${isDelivering?'delivering':''}" style="left:${p.x}%;top:${p.y}%"><img src="courier-character.png" alt="현재 배달원 위치"><span class="cargo" aria-hidden="true"></span><span class="motion-mark" aria-hidden="true">››</span></div><span class="map-legend">집을 눌러 선택 · 숫자는 방문 순서</span>`;
+      el.map.querySelectorAll('[data-node]').forEach(button=>button.addEventListener('click',()=>{if(isDelivering)return;const id=button.dataset.node;if(id==='hub'){setStatus('배달상점에서 선택한 주문을 한꺼번에 상차합니다.');return}showHouseOrders(id)}));
+    }
+    function renderTop(){el.weather.textContent=weather().label;el.dayText.textContent=`${state.day}일차`;el.dayTrack.innerHTML=Array.from({length:7},(_,i)=>`<i class="daydot ${i+1<state.day?'done':i+1===state.day?'current':''}"></i>`).join('');el.time.textContent=`${state.completedToday}건`;el.cash.textContent=money(state.cash);el.energy.textContent=`♥ ${Math.max(0,state.energy)}`;el.rep.textContent=`★ ${state.rep}`;$('gameEnergy').textContent=`♥ ${Math.max(0,state.energy)}`;$('gameCash').textContent=money(state.cash);$('homeButton').disabled=isDelivering}
+    function setStatus(text,tone='normal'){el.status.querySelector('span').textContent=text;el.status.querySelector('i').style.background=tone==='bad'?'var(--red)':tone==='good'?'var(--gold)':'var(--teal)'}
+    function renderOrders(){
+      refreshOrders();const plan=estimatePlan(),energyShort=Math.max(0,plan.energy-state.energy),can=plan.orders.length&&!energyShort;
+      el.panel.innerHTML=`<button class="cta" id="deliver" ${can&&!isDelivering?'':'disabled'}>${isDelivering?'배달 중…':energyShort?`체력 ${energyShort} 부족 · 선택을 줄이세요`:plan.orders.length?`♥ ${plan.energy} 사용 · ${plan.orders.length}집 배달하기`:'지도에서 배달할 집을 선택하세요'}</button>`;
+      $('deliver').addEventListener('click',deliver);
+    }
+    function renderGear(){el.panel.innerHTML=`<div class="panel-head"><h2>내 장비</h2><span>하루를 마칠 때 하나씩 획득</span></div><div class="gear-grid">${PERKS.map(p=>`<div class="gear ${state.perks.includes(p.id)?'':'locked'}"><i>${p.icon}</i><b>${p.name}</b><span>${state.perks.includes(p.id)?p.desc:'아직 획득하지 못했습니다.'}</span></div>`).join('')}</div>`}
+    function renderLog(){const pct=Math.min(100,state.cash/1000);el.panel.innerHTML=`<div class="goalbox"><div class="goalrow"><span>오늘의 순수익 목표</span><strong>${money(state.cash)} / 100,000원</strong></div><div class="progress"><i style="width:${pct}%"></i></div></div><div class="log">${(state.log||[]).slice(0,8).map(x=>`<p>${x}</p>`).join('')}</div><button class="reset" id="resetGame">캠페인 기록 초기화</button>`;$('resetGame').addEventListener('click',confirmReset)}
+    function renderPanel(){renderOrders()}
+    function render(){renderTop();renderMap();renderPanel();saveGame()}
+    function hideQuickAccept(){el.quickBackdrop.classList.remove('show')}
+    function planWithOrder(order){
+      if(selectedOrders.includes(order.id))return estimatePlan();
+      const previousSelected=selectedOrders,previousStops=routeStops;
+      selectedOrders=[...previousSelected,order.id];routeStops=previousStops.includes(order.home)?[...previousStops]:[...previousStops,order.home];
+      const plan=estimatePlan();selectedOrders=previousSelected;routeStops=previousStops;return plan
+    }
+    function showHouseOrders(homeId){
+      const home=node(homeId),orders=state.orders.filter(o=>o.home===homeId),chosen=selectedAt(homeId).length;
+      el.quickSheet.innerHTML=`<div class="quick-head"><div class="quick-title"><i>${home.icon}</i><div><b>${home.name}</b></div></div><button class="quick-close" id="quickClose" aria-label="닫기">×</button></div><div class="house-orders">${orders.map(o=>{const projected=planWithOrder(o),parts=[`경로 기본 ♥ ${projected.baseEnergy}`];if(projected.ebikeSaved)parts.push(`자전거 -${projected.ebikeSaved}`);if(projected.weatherExtra)parts.push(`${weather().label} +${projected.weatherExtra}`);return `<button class="house-order ${selectedOrders.includes(o.id)?'selected':''}" data-toggle-order="${o.id}"><i>${o.icon}</i><span><b>${selectedOrders.includes(o.id)?'✓ ':''}${o.title}</b><span>${parts.join(' · ')}</span></span><strong>♥ ${projected.energy}</strong></button>`}).join('')}</div><button class="quick-accept" id="quickDone">${chosen?'이 주문을 경로에 반영':'선택 없이 닫기'}</button>`;
+      el.quickBackdrop.classList.add('show');$('quickClose').addEventListener('click',hideQuickAccept);$('quickDone').addEventListener('click',hideQuickAccept);el.quickSheet.querySelectorAll('[data-toggle-order]').forEach(button=>button.addEventListener('click',()=>toggleOrder(button.dataset.toggleOrder,homeId)));
+    }
+    function toggleOrder(orderId,homeId){
+      if(isDelivering)return;const index=selectedOrders.indexOf(orderId);if(index>=0)selectedOrders.splice(index,1);else selectedOrders.push(orderId);if(selectedAt(homeId).length&&!routeStops.includes(homeId))routeStops.push(homeId);if(!selectedAt(homeId).length)routeStops=routeStops.filter(id=>id!==homeId);activeRoute=estimatePlan().path;renderMap();renderPanel();showHouseOrders(homeId);setStatus(`${selectedOrders.length}개 주문 선택 · 지도 숫자 순서대로 배달합니다.`)
+    }
+    function moveStop(index,direction){if(isDelivering)return;const target=index+direction;if(target<0||target>=routeStops.length)return;[routeStops[index],routeStops[target]]=[routeStops[target],routeStops[index]];activeRoute=estimatePlan().path;setStatus(`방문 순서를 변경했습니다. ${routeStops.map((id,i)=>`${i+1}. ${node(id).name}`).join(' → ')}`);render()}
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+    let audioContext;
+    function prepareSound(){const AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext)return null;audioContext=audioContext||new AudioContext();if(audioContext.state==='suspended')audioContext.resume();return audioContext}
+    function playProfitDing(){
+      const context=prepareSound();if(!context)return;const now=context.currentTime;
+      [[1046.5,.12,.55],[2093,.035,.32]].forEach(([frequency,volume,duration])=>{const oscillator=context.createOscillator(),gain=context.createGain();oscillator.type='sine';oscillator.frequency.setValueAtTime(frequency,now);gain.gain.setValueAtTime(volume,now);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);oscillator.connect(gain);gain.connect(context.destination);oscillator.start(now);oscillator.stop(now+duration)})
+    }
+    async function animateDelivery(plan){
+      isDelivering=true;$('homeButton').disabled=true;activeRoute=plan.path;renderMap();renderPanel();const marker=el.map.querySelector('.player-marker'),cargo=marker.querySelector('.cargo');let remaining=plan.orders.length,current=node(state.location);
+      const updateStage=(step,title,detail)=>{const titleEl=$('stageTitle'),detailEl=$('stageDetail');if(titleEl)titleEl.textContent=title;if(detailEl)detailEl.textContent=detail;el.map.querySelectorAll('[data-step]').forEach((x,i)=>{x.classList.toggle('active',i===step);x.classList.toggle('done',i<step)});el.map.querySelectorAll('.stage-track i').forEach((x,i)=>x.classList.toggle('done',i<step))};
+      const movePath=async(path,title,step=1)=>{for(let i=1;i<path.length;i++){const target=node(path[i]);marker.classList.toggle('west',target.x<current.x);updateStage(step,title,`${current.name} → ${target.name}`);setStatus(`${target.name} 방향으로 이동하고 있습니다.`);marker.style.left=`${target.x}%`;marker.style.top=`${target.y}%`;await wait(900);el.map.querySelector(`[data-node="${target.id}"]`)?.classList.add('visited');current=target;await wait(180)}};
+      const returnLeg=plan.legs.find(leg=>leg.type==='return');if(returnLeg)await movePath(returnLeg.path,'배달상점으로 이동');
+      updateStage(0,'주문 일괄 상차',`${plan.orders.length}개 주문을 방문 순서대로 가방에 넣습니다.`);marker.classList.add('carrying');cargo.textContent=`${remaining}`;setStatus(`배달상점에서 ${plan.orders.length}개 주문을 한꺼번에 상차했습니다.`,'good');await wait(1400);
+      for(let index=0;index<plan.stops.length;index++){const home=plan.stops[index],leg=plan.legs.find(x=>x.type==='delivery'&&x.to===home),orders=selectedAt(home);await movePath(leg.path,`${index+1}/${plan.stops.length}번째 가정으로 배송`);updateStage(2,`${node(home).name} 직접 전달`,`${orders.map(o=>o.icon).join(' ')} ${orders.length}개 주문을 전달합니다.`);cargo.textContent='✓';setStatus(`${node(home).name} 고객에게 ${orders.length}개 주문을 직접 전달했습니다!`,'good');if(navigator.vibrate)navigator.vibrate(25);await wait(1150);remaining-=orders.length;cargo.textContent=remaining||'✓'}
+      const finishLeg=plan.legs.find(leg=>leg.type==='finish');if(finishLeg){cargo.textContent='↩';await movePath(finishLeg.path,'배달상점으로 복귀',3)}
+      marker.classList.remove('delivering');marker.classList.add('handoff');cargo.textContent='✓';updateStage(3,'상점 복귀 완료',`${plan.stops.length}개 가정 · ${plan.orders.length}개 주문 완료`);setStatus('모든 배달을 마치고 배달상점으로 복귀했습니다!','good');if(navigator.vibrate)navigator.vibrate([25,35,45]);await wait(1400)
+    }
+    async function deliver(){
+      if(isDelivering)return;prepareSound();hideQuickAccept();const plan=estimatePlan();if(!plan.orders.length||plan.energy>state.energy)return;
+      const deliveredIds=[...selectedOrders];await animateDelivery(plan);const tipChance=.08+state.rep*.025+(state.perks.includes('regulars') ? .15 : 0),tip=Math.random()<tipChance?choose([3000,5000,7000]):0;
+      state.time+=plan.minutes;state.energy-=plan.energy;state.cash+=plan.net+tip;state.totalNet+=plan.net+tip;state.dayGross+=plan.reward+tip;state.dayExpense+=plan.expense;state.location='hub';state.completedToday+=plan.orders.length;state.totalCompleted+=plan.orders.length;if(plan.net+tip>0)playProfitDing();
+      if(Math.random()<.28)state.rep=Math.min(10,state.rep+1);addLog(`${plan.stops.length}개 가정, ${plan.orders.length}개 주문 경로 완료 · 순수익 ${money(plan.net+tip)}`);state.orders=state.orders.filter(o=>!deliveredIds.includes(o.id));selectedOrders=[];routeStops=[];activeRoute=[];isDelivering=false;refreshOrders();setStatus(`경로 배달 완료! ${tip?`고객들이 ${money(tip)} 팁을 모아주었습니다.`:'다음 경로를 계획하세요.'}`,'good');render();
+      if(state.energy<=0){setTimeout(()=>endDay(true),250);return}if(Math.random()<.34)setTimeout(showRandomEvent,350)
+    }
+    function showModal(kicker,title,copy,actions,ending=false){hideQuickAccept();el.modal.innerHTML=`<div class="${ending?'ending':''}"><p class="modal-kicker">${kicker}</p><h2>${title}</h2><p class="modal-copy">${copy}</p><div class="choices">${actions.map((a,i)=>`<button class="choice ${i===0?'primary':''}" data-action="${i}"><b>${a.label}</b><span>${a.detail||''}</span></button>`).join('')}</div></div>`;el.modalBackdrop.classList.add('show');el.modal.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>actions[Number(b.dataset.action)].run()))}
+    function hideModal(){el.modalBackdrop.classList.remove('show')}
+    function showHomeScreen(){
+      if(isDelivering)return;hideQuickAccept();const pct=Math.min(100,state.cash/1000),gears=PERKS.map(p=>`<div class="gear ${state.perks.includes(p.id)?'':'locked'}"><i>${p.icon}</i><b>${p.name}</b><span>${state.perks.includes(p.id)?p.desc:'아직 획득하지 못했습니다.'}</span></div>`).join(''),logs=(state.log||[]).slice(0,5).map(entry=>`<p>${entry}</p>`).join('');
+      el.modal.innerHTML=`<div class="home-screen"><div class="home-screen-head"><div><p class="modal-kicker">${state.day}일차</p><h2>라이더 홈</h2></div><button class="quick-close" id="homeClose" aria-label="홈 닫기">×</button></div><div class="goalbox"><div class="goalrow"><span>오늘 순수익</span><strong>${money(state.cash)} / 100,000원</strong></div><div class="progress"><i style="width:${pct}%"></i></div></div><h3>장비</h3><div class="gear-grid">${gears}</div><h3>최근 배달 일지</h3><div class="log">${logs||'<p>아직 배달 기록이 없습니다.</p>'}</div><button class="home-resume" id="homeResume">계속 배달하기</button></div>`;
+      el.modalBackdrop.classList.add('show');$('homeClose').addEventListener('click',hideModal);$('homeResume').addEventListener('click',hideModal)
+    }
+    function resolveRandomEvent(event,choice){
+      const before={energy:state.energy,cash:state.cash,rep:state.rep};choice.effect(state);selectedOrders=[];routeStops=[];activeRoute=[];activeTab='orders';render();setStatus(`${event.title} 상황을 해결했습니다. 다음 배달을 계획하세요.`,'good');
+      const changes=[],energyChange=state.energy-before.energy,cashChange=state.cash-before.cash,repChange=state.rep-before.rep;
+      if(energyChange)changes.push(`체력 ${energyChange>0?'+':''}${energyChange}`);if(cashChange)changes.push(`수익 ${cashChange>0?'+':''}${money(cashChange)}`);if(repChange)changes.push(`평판 ${repChange>0?'+':''}${repChange}`);
+      const exhausted=state.energy<=0;showModal('상황 해결',event.title,`“${choice.label}”을 선택했습니다.\n\n${changes.length?changes.join(' · '):'자원 변화 없이 상황을 마쳤습니다.'}`,[{label:exhausted?'오늘 결과 보기':'다음 배달 계획하기',detail:exhausted?'체력을 모두 사용했습니다.':'지도로 돌아가 새 경로를 선택합니다.',run:()=>{hideModal();if(exhausted){endDay(true);return}render();setStatus('돌발상황 해결 완료 · 다음 배달지를 선택하세요.','good')}}])
+    }
+    function showRandomEvent(){const event=choose(EVENTS);showModal('돌발 상황',event.title,event.copy,event.choices.map(choice=>({label:choice.label,detail:choice.detail,run:()=>resolveRandomEvent(event,choice)})))}
+    function endDay(auto){
+      if(isDelivering)return;
+      const hit=state.cash>=100000,summary=`완료한 주문 ${state.completedToday}건 · 남은 체력 ♥ ${Math.max(0,state.energy)}\n총매출 ${money(state.dayGross)} · 비용 ${money(state.dayExpense)}\n오늘 순수익 ${money(state.cash)}`;
+      if(state.day>=7){showModal('7일 캠페인 종료',hit?'마지막 날 목표 달성!':'마지막 영업 종료',summary,[{label:'최종 결과 보기',detail:'7일간의 선택을 정리합니다.',run:endCampaign}],true);return}
+      const available=PERKS.filter(p=>!state.perks.includes(p.id)),choices=(available.length?available.sort(()=>Math.random()-.5).slice(0,3):[{id:'bonus',icon:'💰',name:'격려금',desc:'다음 날 10,000원으로 시작합니다.'}]);
+      showModal(hit?'오늘의 목표 달성':'오늘 영업 종료',hit?'10만 원을 넘겼습니다!':'아쉽지만 경험은 남았습니다',`${summary}\n\n내일 사용할 장비를 하나 고르세요.`,choices.map(p=>({label:`${p.icon} ${p.name}`,detail:p.desc,run:()=>nextDay(p.id)})),true)
+    }
+    function nextDay(perk){if(perk!=='bonus')state.perks.push(perk);state.day++;state.time=480;state.cash=perk==='bonus'?10000:0;state.energy=10+(state.perks.includes('snack')?2:0)+(state.perks.includes('raincoat')?1:0);state.location='hub';state.weather=choose(WEATHER).id;state.orders=[];state.dayGross=0;state.dayExpense=0;state.completedToday=0;state.failedToday=0;selectedOrders=[];routeStops=[];activeRoute=[];isDelivering=false;addLog(`${state.day}일차 영업을 시작했다.`);hideModal();activeTab='orders';setStatus(`${state.day}일차가 시작됐습니다.`);render()}
+    function endCampaign(){
+      state.ended=true;saveGame();const avg=Math.round(state.totalNet/7),great=state.totalNet>=700000&&state.rep>=7,good=state.totalNet>=560000,title=great?'동네의 전설':good?'우리 동네 해결사':'다시 출발하는 라이더',icon=great?'🏆':good?'🌟':'🚲';
+      showModal('캠페인 완주',`${icon} ${title}`,`7일 총 순수익 ${money(state.totalNet)}\n하루 평균 ${money(avg)}\n완료한 주문 ${state.totalCompleted}건 · 최종 평판 ${state.rep}\n\n같은 동네라도 날씨와 주문, 사건이 달라지면 전혀 다른 운영이 필요합니다.`,[{label:'새 캠페인 시작',detail:'기록을 초기화하고 다시 도전합니다.',run:startNewCampaign}],true)
+    }
+    function startNewCampaign(){state=freshState();state.weather=choose(WEATHER).id;selectedOrders=[];routeStops=[];activeRoute=[];isDelivering=false;refreshOrders();hideModal();activeTab='orders';setStatus('가정을 눌러 주문을 고르고 첫 배달 경로를 만드세요.');render()}
+    function confirmReset(){showModal('기록 초기화','새 캠페인을 시작할까요?','현재 7일 캠페인의 수익과 장비 기록이 사라집니다.',[{label:'초기화하고 다시 시작',detail:'현재 기록을 지웁니다.',run:startNewCampaign},{label:'취소',detail:'현재 캠페인을 유지합니다.',run:hideModal}])}
+    function showIntro(hasSave){
+      if(hasSave&&!state.ended){showModal('이어하기',`${state.day}일차 배달 일지`,`현재 순수익 ${money(state.cash)} · 장비 ${state.perks.length}개\n진행 중인 캠페인을 이어서 플레이합니다.`,[{label:'계속 플레이',detail:'저장된 위치에서 시작합니다.',run:hideModal},{label:'새 캠페인',detail:'현재 기록을 지우고 처음부터 시작합니다.',run:confirmReset}]);return}
+      showModal('프리미엄 모바일 게임 콘셉트','7일 동안 동네에서 살아남기','각 가정에 들어온 다양한 주문을 골라 한 번에 묶고, 방문 순서를 직접 정해 순수익 10만 원을 노리세요.\n\n멀리 갈수록 체력을 많이 쓰므로, 보유 체력 안에서 가장 수익성 좋은 경로를 만드는 것이 핵심입니다. 하루가 끝나면 장비 하나를 골라 다음 날의 전략을 바꿀 수 있습니다.',[{label:'7일 캠페인 시작',detail:'가정 선택 → 주문 선택 → 체력 경로 편집으로 진행합니다.',run:startNewCampaign}],true)
+    }
+    el.quickBackdrop.addEventListener('click',event=>{if(event.target===el.quickBackdrop)hideQuickAccept()});document.addEventListener('keydown',event=>{if(event.key==='Escape')hideQuickAccept()});
+    $('homeButton').addEventListener('click',showHomeScreen);
+    document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{if(isDelivering)return;hideQuickAccept();activeTab=b.dataset.tab;renderPanel()}));
+    const loaded=loadGame();state=loaded||freshState();if(!state.orders)state.orders=[];if(state.location!=='hub'){state.location='hub';addLog('다음 배달 준비를 위해 배달상점으로 복귀했다.')}refreshOrders();render();showIntro(Boolean(loaded));
+  })();
+  </script>
+</body>
+</html>
