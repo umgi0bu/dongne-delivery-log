@@ -22,9 +22,9 @@
     .topbar { display:none; }
     .topline { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
     .eyebrow { display:none; }
-    h1 { margin:0; font-size:18px; letter-spacing:-.04em; }
-    .weather { padding:5px 8px; border-radius:9px; background:rgba(255,255,255,.13); font-size:10px; font-weight:800; white-space:nowrap; }
-    .dayline { display:flex; align-items:center; justify-content:flex-start; gap:6px; margin-top:3px; color:#d8ede9; font-size:9px; }
+    h1 { margin:0; font-size:27px; letter-spacing:-.04em; }
+    .weather { padding:5px 8px; border-radius:9px; background:rgba(255,255,255,.13); font-size:15px; font-weight:800; white-space:nowrap; }
+    .dayline { display:flex; align-items:center; justify-content:flex-start; gap:6px; margin-top:3px; color:#d8ede9; font-size:13.5px; }
     .dayline > span:last-child::before { content:"· "; }
     .daytrack { display:none; }
     .daydot { height:5px; border-radius:99px; background:rgba(255,255,255,.18); }
@@ -33,176 +33,188 @@
     .stats { display:none; }
     .gamebar { flex:0 0 auto; display:grid; grid-template-columns:1fr 92px; min-height:54px; color:white; background:#14283b; }
     .game-summary { display:flex; align-items:center; gap:8px; padding:8px 11px; border-right:1px solid rgba(255,255,255,.14); }
-    .game-summary span,.game-summary strong { padding:7px 9px; border-radius:10px; background:rgba(255,255,255,.1); font-size:12px; white-space:nowrap; }
+    .game-summary span,.game-summary strong { padding:7px 9px; border-radius:10px; background:rgba(255,255,255,.1); font-size:18px; white-space:nowrap; }
     .game-summary strong { overflow:hidden; text-overflow:ellipsis; }
-    .home-button { margin:7px; border:0; border-radius:11px; color:#14283b; background:#f4c45b; font-size:12px; font-weight:900; cursor:pointer; }
+    .home-button { margin:7px; border:0; border-radius:11px; color:#14283b; background:#f4c45b; font-size:18px; font-weight:900; cursor:pointer; }
     .home-button:disabled { opacity:.45; cursor:not-allowed; }
     .stat { min-width:0; padding:6px 4px; text-align:center; background:var(--card); }
-    .stat span { display:block; margin-bottom:1px; color:var(--muted); font-size:8px; }
-    .stat strong { display:block; overflow:hidden; color:var(--ink); font-size:12px; letter-spacing:-.04em; text-overflow:ellipsis; white-space:nowrap; }
+    .stat span { display:block; margin-bottom:1px; color:var(--muted); font-size:12px; }
+    .stat strong { display:block; overflow:hidden; color:var(--ink); font-size:18px; letter-spacing:-.04em; text-overflow:ellipsis; white-space:nowrap; }
     .map-wrap { position:relative; flex:1 1 auto; min-height:0; margin:0; overflow:hidden; border-radius:0; background:#d7e5df; }
     .map { position:relative; width:100%; height:100%; min-height:270px; overflow:hidden; }
     .map::before { content:""; position:absolute; inset:0; opacity:.32; background:linear-gradient(90deg,transparent 49%,rgba(255,255,255,.9) 50%,transparent 51%),linear-gradient(transparent 49%,rgba(255,255,255,.75) 50%,transparent 51%); background-size:54px 54px; }
     .map-hud { position:absolute; left:10px; right:10px; top:10px; z-index:11; display:flex; justify-content:space-between; pointer-events:none; }
-    .map-hud span { padding:7px 10px; border-radius:11px; color:white; background:rgba(20,40,59,.88); box-shadow:0 5px 14px rgba(20,40,59,.18); font-size:12px; font-weight:900; backdrop-filter:blur(7px); }
+    .map-hud span { padding:7px 10px; border-radius:11px; color:white; background:rgba(20,40,59,.88); box-shadow:0 5px 14px rgba(20,40,59,.18); font-size:18px; font-weight:900; backdrop-filter:blur(7px); }
     .map.delivering .map-hud { opacity:0; }
     .roads { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
     .road { stroke:#8c999e; stroke-width:5; stroke-linecap:round; }
     .road.active { stroke:#f1a33a; stroke-width:7; }
     .map.delivering .road.active { stroke-dasharray:8 6; animation:road-flow .9s linear infinite; }
     .node { position:absolute; z-index:2; width:62px; height:62px; padding:0; transform:translate(-50%,-50%); border:0; border-radius:18px; color:#38515a; background:transparent; cursor:pointer; }
-    .node .icon { display:block; width:100%; height:100%; font-size:19px; }
+    .node .icon { display:block; width:100%; height:100%; font-size:28.5px; }
     .node .icon img { display:block; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 5px 4px rgba(32,54,59,.24)); image-rendering:pixelated; }
     .node.hub-node { width:42px; height:42px; border:5px solid #fffdf8; border-radius:50%; background:var(--teal); box-shadow:0 5px 12px rgba(24,38,52,.25),inset 0 0 0 4px rgba(255,255,255,.2); }
     .node.hub-node .hub-dot { position:absolute; inset:10px; border-radius:50%; background:#f4c45b; }
-    .node .name { position:absolute; left:50%; top:61px; transform:translateX(-50%); width:max-content; max-width:82px; color:#334c54; font-size:9px; font-weight:900; text-shadow:0 1px 3px #fff,0 0 4px #fff; }
+    .node .name { position:absolute; left:50%; top:61px; transform:translateX(-50%); width:max-content; max-width:82px; color:#334c54; font-size:13.5px; font-weight:900; text-shadow:0 1px 3px #fff,0 0 4px #fff; }
     .node.hub-node .name { top:45px; }
     .node.bottom-node .name { top:auto; bottom:61px; }
     .node.pickup { box-shadow:0 0 0 4px #4cbca6,0 5px 13px rgba(32,54,59,.16); }
     .node.dropoff { box-shadow:0 0 0 4px #f0a33c,0 5px 13px rgba(32,54,59,.16); }
     .node.selected-home { box-shadow:0 0 0 4px #f0a33c,0 5px 13px rgba(32,54,59,.16); }
     .node.visited { animation:node-arrival .7s ease; }
-    .order-badge { position:absolute; right:-5px; top:-6px; display:grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border-radius:99px; color:white; background:var(--teal); box-shadow:0 2px 6px rgba(24,38,52,.2); font-size:9px; font-weight:900; }
-    .stop-number { position:absolute; left:-6px; top:-7px; display:grid; place-items:center; width:22px; height:22px; border-radius:50%; color:white; background:var(--orange); box-shadow:0 2px 6px rgba(24,38,52,.2); font-size:10px; font-weight:900; }
+    .order-badge { position:absolute; right:-5px; top:-6px; display:grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border-radius:99px; color:white; background:var(--teal); box-shadow:0 2px 6px rgba(24,38,52,.2); font-size:13.5px; font-weight:900; }
+    .stop-number { position:absolute; left:-6px; top:-7px; display:grid; place-items:center; width:22px; height:22px; border-radius:50%; color:white; background:var(--orange); box-shadow:0 2px 6px rgba(24,38,52,.2); font-size:15px; font-weight:900; }
     .player-marker { position:absolute; z-index:4; width:43px; height:64px; transform:translate(-50%,-72%); transition:left .48s cubic-bezier(.2,.75,.25,1),top .48s cubic-bezier(.2,.75,.25,1); pointer-events:none; }
     .player-marker img { width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 5px 4px rgba(24,38,52,.3)); transform-origin:50% 88%; }
     .player-marker.west img { transform:scaleX(-1); }
+    .player-marker.idle img { position:relative; animation:courier-idle 1.6s steps(1,end) infinite; }
     .player-marker.delivering img { animation:courier-step .34s ease-in-out infinite alternate; }
     .player-marker.delivering { z-index:8; width:50px; height:75px; }
-    .cargo { position:absolute; right:-17px; top:2px; display:grid; place-items:center; width:29px; height:29px; border-radius:10px; background:white; box-shadow:0 4px 12px rgba(24,38,52,.25); font-size:16px; opacity:0; transform:scale(.65); transition:.2s ease; }
+    .cargo { position:absolute; right:-17px; top:2px; display:grid; place-items:center; width:29px; height:29px; border-radius:10px; background:white; box-shadow:0 4px 12px rgba(24,38,52,.25); font-size:24px; opacity:0; transform:scale(.65); transition:.2s ease; }
     .player-marker.carrying .cargo { opacity:1; transform:scale(1); }
     .player-marker.handoff .cargo { color:white; background:var(--teal); animation:handoff-pop .5s ease; }
-    .motion-mark { position:absolute; left:-10px; bottom:5px; color:white; font-size:14px; font-weight:900; opacity:0; text-shadow:0 2px 4px rgba(24,38,52,.55); }
+    .motion-mark { position:absolute; left:-10px; bottom:5px; color:white; font-size:21px; font-weight:900; opacity:0; text-shadow:0 2px 4px rgba(24,38,52,.55); }
     .player-marker.delivering .motion-mark { opacity:1; animation:motion-fade .55s ease infinite; }
-    .map-legend { position:absolute; right:8px; bottom:8px; z-index:5; padding:6px 8px; border-radius:9px; color:#52636a; background:rgba(255,253,247,.88); font-size:8px; font-weight:800; }
+    .idle-mark { position:absolute; right:-8px; top:1px; color:#fff3c9; font-size:24px; font-weight:900; line-height:1; opacity:0; text-shadow:2px 2px #4d301f; }
+    .player-marker.idle .idle-mark { animation:courier-think 3.2s steps(1,end) infinite; }
+    .map-legend { position:absolute; right:8px; bottom:8px; z-index:5; padding:6px 8px; border-radius:9px; color:#52636a; background:rgba(255,253,247,.88); font-size:12px; font-weight:800; }
     .map.delivering .map-legend { opacity:0; }
     .delivery-stage { position:absolute; left:50%; top:8px; z-index:10; display:none; width:min(290px,calc(100% - 16px)); transform:translateX(-50%); padding:9px 11px; border-radius:13px; color:white; background:rgba(20,40,59,.9); box-shadow:0 8px 24px rgba(20,40,59,.22); backdrop-filter:blur(8px); text-align:center; }
     .map.delivering .delivery-stage { display:block; }
     .stage-track { display:flex; align-items:center; justify-content:center; gap:5px; margin-bottom:5px; }
-    .stage-track span { color:#93aaa9; font-size:8px; font-weight:900; }
+    .stage-track span { color:#93aaa9; font-size:12px; font-weight:900; }
     .stage-track span.active { color:#fff; }
     .stage-track span.done { color:#f4c45b; }
     .stage-track i { width:15px; height:2px; background:#526872; }
     .stage-track i.done { background:#f4c45b; }
-    .delivery-stage b { display:block; font-size:12px; }
-    .delivery-stage small { display:block; margin-top:2px; color:#cfe0de; font-size:9px; }
+    .delivery-stage b { display:block; font-size:18px; }
+    .delivery-stage small { display:block; margin-top:2px; color:#cfe0de; font-size:13.5px; }
     @keyframes road-flow { to { stroke-dashoffset:-14; } }
     @keyframes courier-step { from { transform:translateY(0) rotate(-1.5deg); } to { transform:translateY(-4px) rotate(1.5deg); } }
+    @keyframes courier-idle { 0%,44%,100% { top:0; } 45%,78% { top:-2px; } 79%,88% { top:0; } 89%,94% { top:-1px; } }
+    @keyframes courier-think { 0%,69%,100% { opacity:0; } 70%,84% { opacity:1; } 85%,99% { opacity:0; } }
     @keyframes motion-fade { 0% { transform:translateX(6px); opacity:0; } 40% { opacity:1; } 100% { transform:translateX(-5px); opacity:0; } }
     @keyframes handoff-pop { 0% { transform:scale(.5); } 65% { transform:scale(1.25); } 100% { transform:scale(1); } }
     @keyframes node-arrival { 0% { transform:translate(-50%,-50%) scale(1); } 50% { transform:translate(-50%,-50%) scale(1.22); } 100% { transform:translate(-50%,-50%) scale(1); } }
     .status { display:none; }
     .status i { flex:0 0 8px; width:8px; height:8px; border-radius:50%; background:var(--teal); }
     .tabs { display:none; }
-    .tab { border:0; border-radius:8px; padding:6px; color:var(--muted); background:transparent; font-size:10px; font-weight:850; cursor:pointer; }
+    .tab { border:0; border-radius:8px; padding:6px; color:var(--muted); background:transparent; font-size:15px; font-weight:850; cursor:pointer; }
     .tab.active { color:var(--ink); background:white; box-shadow:0 2px 8px rgba(28,42,48,.09); }
     .panel { flex:0 0 auto; min-height:0; overflow:visible; padding:10px 10px calc(10px + env(safe-area-inset-bottom)); background:var(--card); }
     .panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; }
-    .panel-head h2 { margin:0; font-size:16px; letter-spacing:-.04em; }
-    .panel-head span { color:var(--muted); font-size:9px; }
+    .panel-head h2 { margin:0; font-size:24px; letter-spacing:-.04em; }
+    .panel-head span { color:var(--muted); font-size:13.5px; }
     .orders { display:grid; gap:8px; }
-    .planner-empty { padding:20px 14px; border:1px dashed #bdc8c3; border-radius:16px; color:var(--muted); background:#f5f6f1; text-align:center; font-size:11px; line-height:1.55; }
+    .planner-empty { padding:20px 14px; border:1px dashed #bdc8c3; border-radius:16px; color:var(--muted); background:#f5f6f1; text-align:center; font-size:16.5px; line-height:1.55; }
     .route-stops { display:grid; gap:7px; }
     .route-stop { display:grid; grid-template-columns:32px 1fr auto; gap:9px; align-items:center; padding:10px; border-radius:14px; background:white; box-shadow:inset 0 0 0 1px var(--line); }
-    .route-index { display:grid; place-items:center; width:30px; height:30px; border-radius:10px; color:white; background:var(--orange); font-size:12px; font-weight:900; }
-    .route-stop b { display:block; font-size:11px; }
-    .route-stop span { color:var(--muted); font-size:8px; }
+    .route-index { display:grid; place-items:center; width:30px; height:30px; border-radius:10px; color:white; background:var(--orange); font-size:18px; font-weight:900; }
+    .route-stop b { display:block; font-size:16.5px; }
+    .route-stop span { color:var(--muted); font-size:12px; }
     .route-actions { display:grid; grid-template-columns:repeat(2,27px); gap:3px; }
-    .route-actions button { width:27px; height:27px; border:0; border-radius:8px; color:#496068; background:#e9efec; font-size:11px; font-weight:900; cursor:pointer; }
+    .route-actions button { width:27px; height:27px; border:0; border-radius:8px; color:#496068; background:#e9efec; font-size:16.5px; font-weight:900; cursor:pointer; }
     .route-actions button:disabled { opacity:.3; cursor:default; }
     .order { width:100%; display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:11px; border:1px solid var(--line); border-radius:15px; color:var(--ink); background:white; text-align:left; cursor:pointer; }
     .order.selected { border-color:var(--teal); box-shadow:0 0 0 2px rgba(8,127,112,.16); background:#f7fffc; }
-    .order-icon { display:grid; place-items:center; width:39px; height:39px; border-radius:12px; background:#f4eee0; font-size:21px; }
-    .order b { display:block; margin-bottom:4px; font-size:12px; }
-    .route { display:block; color:var(--muted); font-size:9px; }
-    .order-cost { display:block; margin-top:4px; color:#526870; font-size:9px; font-weight:800; }
+    .order-icon { display:grid; place-items:center; width:39px; height:39px; border-radius:12px; background:#f4eee0; font-size:31.5px; }
+    .food-icon { display:block; width:100%; height:100%; object-fit:contain; image-rendering:pixelated; }
+    .order b { display:block; margin-bottom:4px; font-size:18px; }
+    .route { display:block; color:var(--muted); font-size:13.5px; }
+    .order-cost { display:block; margin-top:4px; color:#526870; font-size:13.5px; font-weight:800; }
     .order.unavailable { background:#f7f3f1; }
     .order.unavailable .order-cost { color:var(--red); }
     .order-pay { text-align:right; }
-    .order-pay strong { display:block; color:var(--teal); font-size:12px; }
-    .order-pay small { color:var(--red); font-size:8px; }
+    .order-pay strong { display:block; color:var(--teal); font-size:18px; }
+    .order-pay small { color:var(--red); font-size:12px; }
     .actionbox { margin:0; padding:0; background:transparent; }
-    .estimate { display:flex; justify-content:space-between; gap:8px; margin-bottom:9px; color:#4a5e65; font-size:9px; }
-    .energy-effect { display:flex; justify-content:space-between; align-items:center; margin:0 0 9px; padding:8px 9px; border-radius:10px; color:#076d62; background:#dff6ef; box-shadow:inset 0 0 0 1px rgba(8,127,112,.16); font-size:9px; font-weight:850; }
+    .estimate { display:flex; justify-content:space-between; gap:8px; margin-bottom:9px; color:#4a5e65; font-size:13.5px; }
+    .energy-effect { display:flex; justify-content:space-between; align-items:center; margin:0 0 9px; padding:8px 9px; border-radius:10px; color:#076d62; background:#dff6ef; box-shadow:inset 0 0 0 1px rgba(8,127,112,.16); font-size:13.5px; font-weight:850; }
     .energy-effect strong { color:var(--teal); }
     .energy-effect.weather-effect { color:#7b5415; background:#fff0cc; box-shadow:inset 0 0 0 1px rgba(194,127,23,.18); }
     .energy-effect.weather-effect strong { color:#a9680b; }
     .requirements { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:9px; }
     .requirement { padding:9px; border-radius:11px; background:white; box-shadow:inset 0 0 0 1px #d8e4df; }
-    .requirement span { display:block; margin-bottom:3px; color:var(--muted); font-size:8px; }
-    .requirement strong { display:block; color:var(--teal); font-size:11px; }
+    .requirement span { display:block; margin-bottom:3px; color:var(--muted); font-size:12px; }
+    .requirement strong { display:block; color:var(--teal); font-size:16.5px; }
     .requirement.bad { background:#fff1f1; box-shadow:inset 0 0 0 1px #e9b8bb; }
     .requirement.bad strong { color:var(--red); }
     .requirement.deadline { grid-column:1/-1; }
-    .shortage { margin:0 0 9px; color:var(--red); font-size:9px; font-weight:850; line-height:1.4; }
+    .shortage { margin:0 0 9px; color:var(--red); font-size:13.5px; font-weight:850; line-height:1.4; }
     .selected-items { display:flex; gap:7px; margin:0 0 8px; padding:1px 0 2px; overflow-x:auto; scrollbar-width:none; }
     .selected-items::-webkit-scrollbar { display:none; }
     .selected-item { flex:0 0 auto; min-width:145px; display:grid; grid-template-columns:34px 1fr; gap:8px; align-items:center; padding:7px 9px; border:1px solid #cbd8d2; border-radius:12px; color:var(--ink); background:#fffdf8; text-align:left; cursor:pointer; }
-    .selected-item i { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#f4eee0; font-style:normal; font-size:19px; }
-    .selected-item b { display:block; max-width:120px; overflow:hidden; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
-    .selected-item span { display:block; margin-top:2px; color:var(--teal); font-size:8px; font-weight:800; }
+    .selected-item i { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:#f4eee0; font-style:normal; font-size:28.5px; }
+    .selected-item b { display:block; max-width:120px; overflow:hidden; font-size:15px; text-overflow:ellipsis; white-space:nowrap; }
+    .selected-item span { display:block; margin-top:2px; color:var(--teal); font-size:12px; font-weight:800; }
     .selected-item:disabled { opacity:.6; cursor:default; }
     .cta { width:100%; min-height:47px; border:0; border-radius:13px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
     .cta:disabled { color:#8b9699; background:#d6dcda; cursor:not-allowed; }
-    .end-btn { width:100%; margin-top:8px; border:1px solid var(--line); border-radius:12px; padding:10px; color:#64727a; background:transparent; font-size:10px; font-weight:800; cursor:pointer; }
+    .end-btn { width:100%; margin-top:8px; border:1px solid var(--line); border-radius:12px; padding:10px; color:#64727a; background:transparent; font-size:15px; font-weight:800; cursor:pointer; }
     .gear-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
     .gear { min-height:95px; padding:12px; border-radius:15px; background:#f2f0e9; }
     .gear.locked { opacity:.48; filter:grayscale(1); }
-    .gear i { font-style:normal; font-size:22px; }
-    .gear b { display:block; margin:6px 0 3px; font-size:11px; }
-    .gear span { color:var(--muted); font-size:9px; line-height:1.35; }
+    .gear i { font-style:normal; font-size:33px; }
+    .gear b { display:block; margin:6px 0 3px; font-size:16.5px; }
+    .gear span { color:var(--muted); font-size:13.5px; line-height:1.35; }
     .goalbox { padding:14px; border-radius:17px; color:white; background:linear-gradient(135deg,#1a3a4b,#0e766b); }
-    .goalrow { display:flex; justify-content:space-between; gap:10px; font-size:11px; }
-    .goalrow strong { font-size:17px; }
+    .goalrow { display:flex; justify-content:space-between; gap:10px; font-size:16.5px; }
+    .goalrow strong { font-size:25.5px; }
     .progress { height:9px; margin-top:10px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.18); }
     .progress i { display:block; height:100%; border-radius:inherit; background:#f4c45b; }
     .log { display:grid; gap:6px; margin-top:10px; }
-    .log p { margin:0; padding:8px 9px; border-radius:10px; color:#53646a; background:#f3f1eb; font-size:9px; }
-    .reset { margin-top:10px; border:0; color:#a44c51; background:transparent; font-size:9px; text-decoration:underline; cursor:pointer; }
+    .log p { margin:0; padding:8px 9px; border-radius:10px; color:#53646a; background:#f3f1eb; font-size:13.5px; }
+    .reset { margin-top:10px; border:0; color:#a44c51; background:transparent; font-size:13.5px; text-decoration:underline; cursor:pointer; }
     .disclaimer { display:none; }
-    .tap-hint { display:block; margin-top:5px; color:var(--teal); font-size:8px; font-weight:900; }
+    .tap-hint { display:block; margin-top:5px; color:var(--teal); font-size:12px; font-weight:900; }
     .quick-backdrop { position:fixed; inset:0; z-index:15; display:none; place-items:end center; padding:14px 10px calc(14px + env(safe-area-inset-bottom)); background:rgba(10,22,30,.3); backdrop-filter:blur(2px); }
     .quick-backdrop.show { display:grid; }
     .quick-sheet { width:min(500px,100%); padding:16px; border-radius:22px; background:#fffdf7; box-shadow:0 18px 55px rgba(15,29,38,.3); animation:quick-rise .22s ease-out; }
     .quick-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
     .quick-title { display:flex; gap:10px; align-items:center; }
-    .quick-title i { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:#f4eee0; font-style:normal; font-size:23px; }
-    .quick-title b { display:block; font-size:14px; }
-    .quick-title span { color:var(--muted); font-size:9px; }
-    .quick-close { width:34px; height:34px; border:0; border-radius:11px; color:#66757a; background:#eeece5; font-size:18px; cursor:pointer; }
+    .quick-title i { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; background:#f4eee0; font-style:normal; font-size:34.5px; }
+    .quick-title b { display:block; font-size:21px; }
+    .quick-title span { color:var(--muted); font-size:13.5px; }
+    .quick-close { width:34px; height:34px; border:0; border-radius:11px; color:#66757a; background:#eeece5; font-size:27px; cursor:pointer; }
     .quick-facts { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:12px 0; }
     .quick-fact { padding:9px 5px; border-radius:11px; background:#f0f4f1; text-align:center; }
-    .quick-fact span { display:block; color:var(--muted); font-size:8px; }
-    .quick-fact strong { display:block; margin-top:3px; font-size:11px; }
-    .quick-warning { margin:0 0 9px; color:var(--red); font-size:9px; font-weight:850; text-align:center; }
+    .quick-fact span { display:block; color:var(--muted); font-size:12px; }
+    .quick-fact strong { display:block; margin-top:3px; font-size:16.5px; }
+    .quick-warning { margin:0 0 9px; color:var(--red); font-size:13.5px; font-weight:850; text-align:center; }
     .house-orders { display:grid; gap:7px; margin:12px 0; }
-    .house-order { width:100%; display:grid; grid-template-columns:auto 1fr auto; gap:9px; align-items:center; padding:10px; border:1px solid var(--line); border-radius:13px; color:var(--ink); background:white; text-align:left; cursor:pointer; }
+    .house-order { width:100%; display:grid; grid-template-columns:24px minmax(0,1fr) auto auto auto; gap:6px; align-items:center; padding:10px; border:1px solid var(--line); border-radius:13px; color:var(--ink); background:white; text-align:left; }
     .house-order.selected { border-color:var(--teal); background:#edfaf6; box-shadow:0 0 0 2px rgba(8,127,112,.12); }
-    .house-order i { font-style:normal; font-size:21px; }
-    .house-order b { display:block; font-size:10px; }
-    .house-order span { color:var(--muted); font-size:8px; }
-    .house-order strong { color:var(--red); font-size:10px; white-space:nowrap; }
+    .house-order i { font-style:normal; font-size:31.5px; }
+    .house-order > i { display:grid; place-items:center; width:24px; height:24px; }
+    .house-order > span { min-width:0; }
+    .house-order b { display:block; font-size:15px; }
+    .house-order span { color:var(--muted); font-size:12px; }
+    .house-order strong { color:var(--teal); font-size:15px; white-space:nowrap; }
+    .order-heart { color:var(--red); font-size:15px; font-style:normal; font-weight:900; white-space:nowrap; }
+    .order-price { color:var(--teal); font-size:15px; font-style:normal; font-weight:900; white-space:nowrap; }
+    .order-select { min-width:62px; min-height:30px; border:0; border-radius:8px; color:white; background:var(--teal); font-size:15px; font-weight:900; cursor:pointer; }
+    .house-order.selected .order-select { color:#144332; background:#b8dc87; }
     .quick-accept { width:100%; min-height:52px; border:0; border-radius:14px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
     .quick-accept:disabled { color:#8b9699; background:#d6dcda; cursor:not-allowed; }
     .modal-backdrop { position:fixed; inset:0; z-index:20; display:none; place-items:end center; padding:18px 12px calc(18px + env(safe-area-inset-bottom)); background:rgba(10,22,30,.58); backdrop-filter:blur(5px); }
     .modal-backdrop.show { display:grid; }
     .modal { width:min(480px,100%); max-height:86vh; overflow:auto; padding:20px; border-radius:24px; background:#fffdf7; box-shadow:var(--shadow); }
-    .modal-kicker { margin:0 0 6px; color:var(--teal); font-size:10px; font-weight:900; letter-spacing:.08em; }
-    .modal h2 { margin:0; font-size:22px; letter-spacing:-.05em; }
-    .modal-copy { margin:10px 0 16px; color:#5e6d73; font-size:12px; line-height:1.6; white-space:pre-line; }
+    .modal-kicker { margin:0 0 6px; color:var(--teal); font-size:15px; font-weight:900; letter-spacing:.08em; }
+    .modal h2 { margin:0; font-size:33px; letter-spacing:-.05em; }
+    .modal-copy { margin:10px 0 16px; color:#5e6d73; font-size:18px; line-height:1.6; white-space:pre-line; }
     .home-screen-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
     .home-screen-head h2 { margin:0; }
-    .home-screen h3 { margin:15px 0 7px; font-size:13px; }
+    .home-screen h3 { margin:15px 0 7px; font-size:19.5px; }
     .home-screen .gear-grid { grid-template-columns:repeat(2,1fr); }
     .home-screen .gear { min-height:82px; padding:10px; }
     .home-resume { width:100%; min-height:48px; margin-top:14px; border:0; border-radius:14px; color:white; background:var(--teal); font-weight:900; cursor:pointer; }
     .choices { display:grid; gap:8px; }
     .choice { width:100%; padding:13px; border:1px solid var(--line); border-radius:15px; color:var(--ink); background:white; text-align:left; cursor:pointer; }
     .choice.primary { color:white; border-color:var(--teal); background:var(--teal); }
-    .choice b { display:block; margin-bottom:3px; font-size:12px; }
-    .choice span { color:inherit; opacity:.72; font-size:9px; line-height:1.4; }
+    .choice b { display:block; margin-bottom:3px; font-size:18px; }
+    .choice span { color:inherit; opacity:.72; font-size:13.5px; line-height:1.4; }
     .ending { text-align:center; }
-    .ending-icon { font-size:48px; }
+    .ending-icon { font-size:72px; }
     /* Cohesive pixel-game UI theme */
     .app { border:4px solid #4d301f; border-radius:8px; background:var(--paper); box-shadow:8px 9px 0 rgba(20,28,24,.55); }
     .gamebar { min-height:58px; color:#3a291d; border-bottom:4px solid #4d301f; background:#9a6938; }
@@ -215,7 +227,11 @@
     .selected-item,.house-order,.choice,.route-stop,.requirement { border:2px solid #845836; border-radius:4px; background:#f3dfa9; box-shadow:inset 0 -3px 0 #d1b778; }
     .selected-item i,.quick-title i,.order-icon { border:2px solid #9a6b42; border-radius:3px; background:#d8b77b; }
     .selected-item span,.order-pay strong,.requirement strong,.modal-kicker,.tap-hint { color:#27734a; }
+    .order-price { color:#27734a; }
+    .order-heart { color:#b84848; }
     .house-order.selected,.order.selected { border-color:#367b4e; background:#d8edb4; box-shadow:inset 0 -3px 0 #a9cc89,0 0 0 2px #315c3b; }
+    .order-select { border:2px solid #315c3b; border-radius:3px; color:#183524; background:#56b475; box-shadow:inset 0 -3px 0 #328353,2px 3px 0 #49311f; text-shadow:0 1px #8fd39f; }
+    .house-order.selected .order-select { border-color:#55783a; color:#2f4c23; background:#c1dc8e; box-shadow:inset 0 -3px 0 #99bb6d,2px 3px 0 #49311f; text-shadow:0 1px #effbc8; }
     .quick-sheet,.modal { border:4px solid #5b3823; border-radius:6px; color:#3b291d; background:#f3dfa9; box-shadow:7px 8px 0 rgba(42,25,16,.58),inset 0 0 0 3px #d2b879; }
     .quick-backdrop,.modal-backdrop { background:rgba(23,30,25,.66); backdrop-filter:none; }
     .quick-close { border:2px solid #5b3823; border-radius:3px; color:#3b291d; background:#d7bd80; box-shadow:inset 0 -3px 0 #ad8e56; }
@@ -235,13 +251,16 @@
     button { image-rendering:pixelated; }
 
     /* Mobile readability scale: map labels stay compact; action and order information grow. */
-    .home-button { font-size:13.2px; }
-    .cta,.quick-accept,.home-resume { font-size:17.6px; }
-    .modal h2 { font-size:24.2px; }
-    .quick-title b { font-size:15.4px; }
-    .selected-item b,.house-order b { font-size:11.5px; }
-    .order b { font-size:13.8px; }
-    .game-summary span,.game-summary strong,.order-pay strong,.house-order strong { font-size:13.8px; }
+    .home-button { font-size:19.8px; }
+    .cta,.quick-accept,.home-resume { font-size:26.4px; }
+    .modal h2 { font-size:36.3px; }
+    .quick-title b { font-size:23.1px; }
+    .selected-item b,.house-order b { font-size:17.25px; }
+    .order b { font-size:20.7px; }
+    .game-summary span,.game-summary strong,.order-pay strong,.house-order strong,.order-heart { font-size:20.7px; }
+    .choice { padding:15px; }
+    .choice b { margin-bottom:5px; font-size:22.5px; }
+    .choice span { font-size:16.5px; line-height:1.5; }
 
     @keyframes quick-rise { from { transform:translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
     @media (max-width:390px) { .node { width:43px; height:43px; border-radius:14px; } .node .name { top:46px; } }
@@ -302,13 +321,15 @@
       {id:'cold',label:'🌬️ 바람',desc:'바람 부는 동네 풍경'}
     ];
     const ORDER_TEMPLATES = [
-      {kind:'coffee',icon:'☕',title:'커피와 샌드위치',base:11000,service:4,weight:1},
-      {kind:'lunch',icon:'🍱',title:'점심 도시락',base:15000,service:5,weight:2},
-      {kind:'parcel',icon:'📦',title:'생활용품 택배',base:18000,service:5,weight:2},
-      {kind:'grocery',icon:'🛍️',title:'장보기 꾸러미',base:14500,service:6,weight:3},
-      {kind:'medicine',icon:'💊',title:'약국 심부름',base:20000,service:4,weight:1},
-      {kind:'flower',icon:'💐',title:'꽃다발 선물',base:19500,service:5,weight:1}
+      {kind:'kimchi',icon:'🍲',image:'food-icons/kimchi-jjigae.png',title:'김치찌개',base:10000,service:5,weight:2},
+      {kind:'chicken',icon:'🍗',image:'food-icons/fried-chicken.png',title:'치킨',base:25000,service:5,weight:2},
+      {kind:'tteokbokki',icon:'🌶️',image:'food-icons/tteokbokki.png',title:'떡볶이',base:15000,service:4,weight:1},
+      {kind:'coffee',icon:'🥪',image:'food-icons/coffee-sandwich.png',title:'커피와 샌드위치',base:5000,service:4,weight:1},
+      {kind:'jajangmyeon',icon:'🍜',image:'food-icons/jajangmyeon.png',title:'짜장면',base:20000,service:5,weight:2},
+      {kind:'sushi',icon:'🍣',image:'food-icons/sushi.png',title:'초밥',base:25000,service:5,weight:1}
     ];
+    const LEGACY_ORDER_KINDS = {coffee:'coffee',lunch:'kimchi',parcel:'chicken',grocery:'tteokbokki',medicine:'jajangmyeon',flower:'sushi'};
+    const ORDER_PAIRS = [['coffee','chicken'],['kimchi','sushi'],['tteokbokki','jajangmyeon']];
     const PERKS = [
       {id:'ebike',icon:'🚲',name:'전기 자전거',desc:'한 집당 필요 체력이 1 감소합니다. 집별 최소 소모는 1입니다.'},
       {id:'raincoat',icon:'🥤',name:'보냉 물통',desc:'매일 시작 체력이 1 증가합니다.'},
@@ -333,7 +354,7 @@
     ];
     let state, activeTab='orders', selectedOrders=[], routeStops=[], activeRoute=[], isDelivering=false;
 
-    const freshState = () => ({day:1,time:480,cash:0,energy:10,rep:3,location:'hub',weather:'sunny',orders:[],perks:[],dayGross:0,dayExpense:0,totalNet:0,totalCompleted:0,completedToday:0,failedToday:0,log:['배달상점에서 첫 출근을 준비했다.'],ended:false});
+    const freshState = () => ({day:1,time:480,cash:0,energy:10,rep:3,location:'hub',weather:'sunny',orders:[],orderFormat:4,perks:[],dayGross:0,dayExpense:0,totalNet:0,totalCompleted:0,completedToday:0,failedToday:0,log:['배달상점에서 첫 출근을 준비했다.'],ended:false});
     const money = n => `${Math.round(n).toLocaleString('ko-KR')}원`;
     const clock = minutes => `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`;
     const WEEKDAYS = ['월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
@@ -345,6 +366,8 @@
     function loadGame(){try{const raw=localStorage.getItem(SAVE_KEY);return raw?{...freshState(),...JSON.parse(raw)}:null}catch{return null}}
     function addLog(text){state.log=[text,...(state.log||[])].slice(0,16)}
     function choose(arr){return arr[Math.floor(Math.random()*arr.length)]}
+    const orderIcon=order=>order.image?`<img class="food-icon" src="${order.image}" alt="">`:order.icon;
+    const orderEnergyCost=order=>Math.max(1,(node(order.home).energy||1)-(state.perks.includes('ebike')?1:0));
     function shortest(from,to){
       const dist={},prev={},unvisited=new Set(NODES.map(n=>n.id));NODES.forEach(n=>dist[n.id]=Infinity);dist[from]=0;
       while(unvisited.size){let current=[...unvisited].sort((a,b)=>dist[a]-dist[b])[0];if(current===to||dist[current]===Infinity)break;unvisited.delete(current);EDGES.forEach(([a,b,w])=>{let next=null;if(a===current)next=b;if(b===current)next=a;if(next&&unvisited.has(next)&&dist[current]+w<dist[next]){dist[next]=dist[current]+w;prev[next]=current}})}
@@ -355,10 +378,13 @@
     const homes=()=>NODES.filter(n=>n.kind==='home');
     const selectedObjects=()=>state.orders.filter(o=>selectedOrders.includes(o.id));
     const selectedAt=homeId=>selectedObjects().filter(o=>o.home===homeId);
-    function newOrder(homeId=choose(homes()).id){const t=choose(ORDER_TEMPLATES),reward=Math.round(t.base/500)*500;return {id:`o${Date.now()}${Math.random().toString(16).slice(2)}`,home:homeId,kind:t.kind,icon:t.icon,title:t.title,reward,service:t.service,weight:t.weight,urgent:false}}
+    function makeOrder(homeId,template){return {id:`o${Date.now()}${Math.random().toString(16).slice(2)}`,home:homeId,kind:template.kind,icon:template.icon,image:template.image,title:template.title,reward:template.base,service:template.service,weight:template.weight,urgent:false}}
+    function newOrderPair(homeId){return choose(ORDER_PAIRS).map(kind=>makeOrder(homeId,ORDER_TEMPLATES.find(t=>t.kind===kind)))}
     function refreshOrders(){
-      const selectedSet=new Set(selectedOrders),seenHomes=new Set();state.orders=(state.orders||[]).filter(o=>Boolean(node(o.home))).map(o=>({...o,title:(o.title||'주문').replace(/^긴급 · /,''),urgent:false})).sort((a,b)=>Number(selectedSet.has(b.id))-Number(selectedSet.has(a.id))).filter(o=>{if(seenHomes.has(o.home))return false;seenHomes.add(o.home);return true});selectedOrders=selectedOrders.filter(id=>state.orders.some(o=>o.id===id));routeStops=routeStops.filter(home=>selectedAt(home).length);
-      homes().forEach(home=>{if(!state.orders.some(o=>o.home===home.id))state.orders.push(newOrder(home.id))})
+      if(state.orderFormat!==4){state.orders=[];selectedOrders=[];routeStops=[];state.orderFormat=4}
+      const selectedSet=new Set(selectedOrders),homeCounts={};state.orders=(state.orders||[]).filter(o=>Boolean(node(o.home))).map(o=>{const template=ORDER_TEMPLATES.find(t=>t.kind===(LEGACY_ORDER_KINDS[o.kind]||o.kind));return template?{...o,kind:template.kind,icon:template.icon,image:template.image,title:template.title,reward:template.base,service:template.service,weight:template.weight,urgent:false}:{...o,title:(o.title||'주문').replace(/^긴급 · /,''),urgent:false}}).sort((a,b)=>Number(selectedSet.has(b.id))-Number(selectedSet.has(a.id))).filter(o=>{homeCounts[o.home]=(homeCounts[o.home]||0)+1;return homeCounts[o.home]<=2});
+      homes().forEach(home=>{const existing=state.orders.filter(o=>o.home===home.id);if(!existing.length){state.orders.push(...newOrderPair(home.id));return}if(existing.length===1){const pair=ORDER_PAIRS.find(kinds=>kinds.includes(existing[0].kind));const mate=ORDER_TEMPLATES.find(t=>t.kind===(pair||[]).find(kind=>kind!==existing[0].kind));state.orders.push(makeOrder(home.id,mate||choose(ORDER_TEMPLATES.filter(t=>t.kind!==existing[0].kind))))}});
+      selectedOrders=selectedOrders.filter(id=>state.orders.some(o=>o.id===id));routeStops=routeStops.filter(home=>selectedAt(home).length);
     }
     function estimatePlan(){
       const orders=selectedObjects(),has=id=>state.perks.includes(id);if(!orders.length)return {orders:[],stops:[],path:[],legs:[],minutes:0,energy:0,baseEnergy:0,ebikeSaved:0,weatherExtra:0,reward:0,expense:0,net:0,late:[],arrivals:{},distance:0};
@@ -368,7 +394,7 @@
       if(current!=='hub')addLeg('hub','return');elapsed+=6+orders.length*2;
       stops.forEach(home=>{addLeg(home,'delivery');const service=5+selectedAt(home).reduce((s,o)=>s+o.service,0);elapsed+=service;arrivals[home]=state.time+elapsed});
       if(current!=='hub')addLeg('hub','finish');
-      const baseEnergy=stops.reduce((sum,home)=>sum+(node(home).energy||1),0);let energy=baseEnergy,ebikeSaved=0;if(has('ebike')){energy=stops.reduce((sum,home)=>sum+Math.max(1,(node(home).energy||1)-1),0);ebikeSaved=baseEnergy-energy}if(has('shortcut'))energy=Math.max(1,energy-1);const weatherExtra=weatherEnergyCost();energy+=weatherExtra;
+      const baseEnergy=stops.reduce((sum,home)=>sum+(node(home).energy||1),0);let energy=baseEnergy,ebikeSaved=0;if(has('ebike')){const bikeBase=stops.reduce((sum,home)=>sum+Math.max(1,(node(home).energy||1)-1),0);ebikeSaved=baseEnergy-bikeBase;energy=bikeBase}if(has('shortcut'))energy=Math.max(1,energy-1);const weatherExtra=weatherEnergyCost();energy+=weatherExtra;
       let reward=orders.reduce((s,o)=>s+o.reward,0);if(has('bag'))reward*=1.1;reward=Math.round(reward/500)*500;const expense=distance*650,net=reward-expense,minutes=Math.ceil(elapsed/5)*5,late=[];
       return {orders,stops,path:fullPath,legs,minutes,energy,baseEnergy,ebikeSaved,weatherExtra,reward,expense,net,late,arrivals,distance}
     }
@@ -376,15 +402,15 @@
       const plan=estimatePlan(),p=node(state.location);activeRoute=plan.path;
       const lines=EDGES.map(([a,b])=>{const na=node(a),nb=node(b);return `<line class="road ${isActiveEdge(a,b)?'active':''}" x1="${na.x}%" y1="${na.y}%" x2="${nb.x}%" y2="${nb.y}%"/>`}).join('');
       const buttons=NODES.filter(n=>n.kind!=='road').map(n=>{const count=n.id==='hub'?0:state.orders.filter(o=>o.home===n.id).length,selectedCount=n.id==='hub'?0:selectedAt(n.id).length,stopIndex=routeStops.indexOf(n.id),marker=n.kind==='hub'?'<span class="hub-dot" aria-hidden="true"></span>':`<span class="icon"><img src="${n.sprite}" alt="" aria-hidden="true"></span>`;return `<button class="node ${n.kind==='hub'?'hub-node':''} ${n.y>78?'bottom-node':''} ${selectedCount?'selected-home':''}" data-node="${n.id}" style="left:${n.x}%;top:${n.y}%" aria-label="${n.name}${count?` 주문 ${count}건`:''}" ${isDelivering?'disabled':''}>${marker}<span class="name">${n.name}</span>${count?`<span class="order-badge">${selectedCount?`${selectedCount}/${count}`:count}</span>`:''}${stopIndex>=0?`<span class="stop-number">${stopIndex+1}</span>`:''}</button>`}).join('');
-      el.map.classList.toggle('delivering',isDelivering);el.map.innerHTML=`<svg class="roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${buttons}<div class="delivery-stage" id="deliveryStage"><div class="stage-track"><span data-step="0">상차</span><i></i><span data-step="1">경로</span><i></i><span data-step="2">배송</span><i></i><span data-step="3">완료</span></div><b id="stageTitle">주문 상차</b><small id="stageDetail">배달 가방을 준비하고 있습니다.</small></div><div class="player-marker ${isDelivering?'delivering':''}" style="left:${p.x}%;top:${p.y}%"><img src="courier-character-2head-pixel.png" alt="현재 배달원 위치"><span class="cargo" aria-hidden="true"></span><span class="motion-mark" aria-hidden="true">››</span></div><span class="map-legend">집을 눌러 선택 · 숫자는 방문 순서</span>`;
+      el.map.classList.toggle('delivering',isDelivering);el.map.innerHTML=`<svg class="roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${buttons}<div class="delivery-stage" id="deliveryStage"><div class="stage-track"><span data-step="0">상차</span><i></i><span data-step="1">경로</span><i></i><span data-step="2">배송</span><i></i><span data-step="3">완료</span></div><b id="stageTitle">주문 상차</b><small id="stageDetail">배달 가방을 준비하고 있습니다.</small></div><div class="player-marker ${isDelivering?'delivering':'idle'}" style="left:${p.x}%;top:${p.y}%"><img src="courier-character-2head-pixel.png" alt="현재 배달원 위치"><span class="cargo" aria-hidden="true"></span><span class="motion-mark" aria-hidden="true">››</span><span class="idle-mark" aria-hidden="true">·</span></div><span class="map-legend">집을 눌러 선택 · 숫자는 방문 순서</span>`;
       el.map.querySelectorAll('[data-node]').forEach(button=>button.addEventListener('click',()=>{if(isDelivering)return;const id=button.dataset.node;if(id==='hub'){setStatus('배달상점에서 선택한 주문을 한꺼번에 상차합니다.');return}showHouseOrders(id)}));
     }
     function renderTop(){el.weather.textContent=weather().label;el.dayText.textContent=`${state.day}일차 · ${weekday(state.day)}`;el.dayTrack.innerHTML=Array.from({length:7},(_,i)=>`<i class="daydot ${i+1<state.day?'done':i+1===state.day?'current':''}"></i>`).join('');el.time.textContent=`${state.completedToday}건`;el.cash.textContent=money(state.cash);el.energy.textContent=`♥ ${Math.max(0,state.energy)}`;el.rep.textContent=`★ ${state.rep}`;$('gameEnergy').textContent=`♥ ${Math.max(0,state.energy)}`;$('gameCash').textContent=money(state.cash);$('homeButton').disabled=isDelivering}
     function setStatus(text,tone='normal'){el.status.querySelector('span').textContent=text;el.status.querySelector('i').style.background=tone==='bad'?'var(--red)':tone==='good'?'var(--gold)':'var(--teal)'}
     function renderOrders(){
       refreshOrders();const plan=estimatePlan(),energyShort=Math.max(0,plan.energy-state.energy),can=plan.orders.length&&!energyShort;
-      const selectedItems=plan.stops.flatMap(homeId=>selectedAt(homeId)).map(o=>`<button class="selected-item" data-selected-home="${o.home}" ${isDelivering?'disabled':''} aria-label="${o.title}, ${node(o.home).name} 주문 다시 보기"><i>${o.icon}</i><span><b>${o.title}</b><span>→ ${node(o.home).name}</span></span></button>`).join('');
-      el.panel.innerHTML=`${selectedItems?`<div class="selected-items" aria-label="선택한 배달 물품">${selectedItems}</div>`:''}<button class="cta" id="deliver" ${can&&!isDelivering?'':'disabled'}>${isDelivering?'배달 중…':energyShort?`체력 ${energyShort} 부족 · 선택을 줄이세요`:plan.orders.length?`♥ ${plan.energy} 사용 · ${plan.orders.length}집 배달하기`:'지도에서 배달할 집을 선택하세요'}</button>`;
+      const selectedItems=plan.stops.flatMap(homeId=>selectedAt(homeId)).map(o=>`<button class="selected-item" data-selected-home="${o.home}" ${isDelivering?'disabled':''} aria-label="${o.title}, ${node(o.home).name} 주문 다시 보기"><i>${orderIcon(o)}</i><span><b>${o.title}</b><span>→ ${node(o.home).name}</span></span></button>`).join('');
+      el.panel.innerHTML=`${selectedItems?`<div class="selected-items" aria-label="선택한 배달 물품">${selectedItems}</div>`:''}<button class="cta" id="deliver" ${can&&!isDelivering?'':'disabled'}>${isDelivering?'배달 중…':energyShort?`체력 ${energyShort} 부족 · 선택을 줄이세요`:plan.orders.length?`♥ ${plan.energy} 사용 · ${plan.orders.length}건 / ${plan.stops.length}곳 배달하기`:'지도에서 배달할 집을 선택하세요'}</button>`;
       el.panel.querySelectorAll('[data-selected-home]').forEach(button=>button.addEventListener('click',()=>{if(!isDelivering)showHouseOrders(button.dataset.selectedHome)}));
       $('deliver').addEventListener('click',deliver);
     }
@@ -401,7 +427,7 @@
     }
     function showHouseOrders(homeId){
       const home=node(homeId),orders=state.orders.filter(o=>o.home===homeId),chosen=selectedAt(homeId).length;
-      el.quickSheet.innerHTML=`<div class="quick-head"><div class="quick-title"><i>${home.icon}</i><div><b>${home.name}</b></div></div><button class="quick-close" id="quickClose" aria-label="닫기">×</button></div><div class="house-orders">${orders.map(o=>{const projected=planWithOrder(o),parts=[`경로 기본 ♥ ${projected.baseEnergy}`];if(projected.ebikeSaved)parts.push(`자전거 -${projected.ebikeSaved}`);if(projected.weatherExtra)parts.push(`${weather().label} +${projected.weatherExtra}`);return `<button class="house-order ${selectedOrders.includes(o.id)?'selected':''}" data-toggle-order="${o.id}"><i>${o.icon}</i><span><b>${selectedOrders.includes(o.id)?'✓ ':''}${o.title}</b><span>${parts.join(' · ')}</span></span><strong>♥ ${projected.energy}</strong></button>`}).join('')}</div><button class="quick-accept" id="quickDone">${chosen?'이 주문을 경로에 반영':'선택 없이 닫기'}</button>`;
+      el.quickSheet.innerHTML=`<div class="quick-head"><div class="quick-title"><i>${home.icon}</i><div><b>${home.name}</b></div></div><button class="quick-close" id="quickClose" aria-label="닫기">×</button></div><div class="house-orders">${orders.map(o=>{const needed=orderEnergyCost(o),selected=selectedOrders.includes(o.id);return `<article class="house-order ${selected?'selected':''}"><i>${orderIcon(o)}</i><span><b>${selected?'✓ ':''}${o.title}</b><span>두 주문 모두 선택해도 방문 체력은 1회</span></span><em class="order-heart">♥ ${needed}</em><strong class="order-price">${money(o.reward)}</strong><button class="order-select" data-toggle-order="${o.id}">${selected?'선택됨':'선택하기'}</button></article>`}).join('')}</div><button class="quick-accept" id="quickDone">${chosen?'이 주문을 경로에 반영':'선택 없이 닫기'}</button>`;
       el.quickBackdrop.classList.add('show');$('quickClose').addEventListener('click',hideQuickAccept);$('quickDone').addEventListener('click',hideQuickAccept);el.quickSheet.querySelectorAll('[data-toggle-order]').forEach(button=>button.addEventListener('click',()=>toggleOrder(button.dataset.toggleOrder,homeId)));
     }
     function toggleOrder(orderId,homeId){
@@ -418,13 +444,14 @@
     function playMoveSound(step=0){const context=prepareSound();if(!context)return;const now=context.currentTime,oscillator=context.createOscillator(),gain=context.createGain();oscillator.type='triangle';oscillator.frequency.setValueAtTime(step%2?175:205,now);oscillator.frequency.exponentialRampToValueAtTime(135,now+.075);gain.gain.setValueAtTime(.022,now);gain.gain.exponentialRampToValueAtTime(.0001,now+.09);oscillator.connect(gain);gain.connect(context.destination);oscillator.start(now);oscillator.stop(now+.1)}
     function playRouteStartSound(){const context=prepareSound();if(!context)return;const now=context.currentTime;[[523,.045,0],[659,.04,.1]].forEach(([frequency,volume,delay])=>{const oscillator=context.createOscillator(),gain=context.createGain();oscillator.type='square';oscillator.frequency.setValueAtTime(frequency,now+delay);gain.gain.setValueAtTime(volume,now+delay);gain.gain.exponentialRampToValueAtTime(.0001,now+delay+.11);oscillator.connect(gain);gain.connect(context.destination);oscillator.start(now+delay);oscillator.stop(now+delay+.12)})}
     function playDeliverySound(){const context=prepareSound();if(!context)return;const now=context.currentTime;[[784,.05,0],[1046,.045,.09]].forEach(([frequency,volume,delay])=>{const oscillator=context.createOscillator(),gain=context.createGain();oscillator.type='sine';oscillator.frequency.setValueAtTime(frequency,now+delay);gain.gain.setValueAtTime(volume,now+delay);gain.gain.exponentialRampToValueAtTime(.0001,now+delay+.16);oscillator.connect(gain);gain.connect(context.destination);oscillator.start(now+delay);oscillator.stop(now+delay+.18)})}
+    function playEventAlert(){const context=prepareSound();if(!context)return;const now=context.currentTime;[[294,.06,0,'triangle'],[440,.04,.13,'square']].forEach(([frequency,volume,delay,type])=>{const oscillator=context.createOscillator(),gain=context.createGain();oscillator.type=type;oscillator.frequency.setValueAtTime(frequency,now+delay);oscillator.frequency.exponentialRampToValueAtTime(frequency*.9,now+delay+.11);gain.gain.setValueAtTime(volume,now+delay);gain.gain.exponentialRampToValueAtTime(.0001,now+delay+.15);oscillator.connect(gain);gain.connect(context.destination);oscillator.start(now+delay);oscillator.stop(now+delay+.16)})}
     async function animateDelivery(plan){
       isDelivering=true;$('homeButton').disabled=true;activeRoute=plan.path;renderMap();renderPanel();const marker=el.map.querySelector('.player-marker'),cargo=marker.querySelector('.cargo');let remaining=plan.orders.length,current=node(state.location);
       const updateStage=(step,title,detail)=>{const titleEl=$('stageTitle'),detailEl=$('stageDetail');if(titleEl)titleEl.textContent=title;if(detailEl)detailEl.textContent=detail;el.map.querySelectorAll('[data-step]').forEach((x,i)=>{x.classList.toggle('active',i===step);x.classList.toggle('done',i<step)});el.map.querySelectorAll('.stage-track i').forEach((x,i)=>x.classList.toggle('done',i<step))};
       const movePath=async(path,title,step=1)=>{for(let i=1;i<path.length;i++){const target=node(path[i]);marker.classList.toggle('west',target.x<current.x);updateStage(step,title,`${current.name} → ${target.name}`);setStatus(`${target.name} 방향으로 이동하고 있습니다.`);playMoveSound(i);marker.style.left=`${target.x}%`;marker.style.top=`${target.y}%`;await wait(900);el.map.querySelector(`[data-node="${target.id}"]`)?.classList.add('visited');current=target;await wait(180)}};
       const returnLeg=plan.legs.find(leg=>leg.type==='return');if(returnLeg)await movePath(returnLeg.path,'배달상점으로 이동');
       updateStage(0,'주문 일괄 상차',`${plan.orders.length}개 주문을 방문 순서대로 가방에 넣습니다.`);marker.classList.add('carrying');cargo.textContent=`${remaining}`;playRouteStartSound();setStatus(`배달상점에서 ${plan.orders.length}개 주문을 한꺼번에 상차했습니다.`,'good');await wait(1400);
-      for(let index=0;index<plan.stops.length;index++){const home=plan.stops[index],leg=plan.legs.find(x=>x.type==='delivery'&&x.to===home),orders=selectedAt(home);await movePath(leg.path,`${index+1}/${plan.stops.length}번째 가정으로 배송`);updateStage(2,`${node(home).name} 직접 전달`,`${orders.map(o=>o.icon).join(' ')} ${orders.length}개 주문을 전달합니다.`);cargo.textContent='✓';playDeliverySound();setStatus(`${node(home).name} 고객에게 ${orders.length}개 주문을 직접 전달했습니다!`,'good');if(navigator.vibrate)navigator.vibrate(25);await wait(1150);remaining-=orders.length;cargo.textContent=remaining||'✓'}
+      for(let index=0;index<plan.stops.length;index++){const home=plan.stops[index],leg=plan.legs.find(x=>x.type==='delivery'&&x.to===home),orders=selectedAt(home);await movePath(leg.path,`${index+1}/${plan.stops.length}번째 가정으로 배송`);updateStage(2,`${node(home).name} 직접 전달`,`${orders.map(o=>o.title).join(' · ')} 배달을 전달합니다.`);cargo.textContent='✓';playDeliverySound();setStatus(`${node(home).name} 고객에게 ${orders.length}개 주문을 직접 전달했습니다!`,'good');if(navigator.vibrate)navigator.vibrate(25);await wait(1150);remaining-=orders.length;cargo.textContent=remaining||'✓'}
       const finishLeg=plan.legs.find(leg=>leg.type==='finish');if(finishLeg){cargo.textContent='↩';await movePath(finishLeg.path,'배달상점으로 복귀',3)}
       marker.classList.remove('delivering');marker.classList.add('handoff');cargo.textContent='✓';updateStage(3,'상점 복귀 완료',`${plan.stops.length}개 가정 · ${plan.orders.length}개 주문 완료`);setStatus('모든 배달을 마치고 배달상점으로 복귀했습니다!','good');if(navigator.vibrate)navigator.vibrate([25,35,45]);await wait(1400)
     }
@@ -448,7 +475,7 @@
       if(energyChange)changes.push(`체력 ${energyChange>0?'+':''}${energyChange}`);if(cashChange)changes.push(`수익 ${cashChange>0?'+':''}${money(cashChange)}`);if(repChange)changes.push(`평판 ${repChange>0?'+':''}${repChange}`);
       const exhausted=state.energy<=0;showModal('상황 해결',event.title,`“${choice.label}”을 선택했습니다.\n\n${changes.length?changes.join(' · '):'자원 변화 없이 상황을 마쳤습니다.'}`,[{label:exhausted?'오늘 결과 보기':'다음 배달 계획하기',detail:exhausted?'체력을 모두 사용했습니다.':'지도로 돌아가 새 경로를 선택합니다.',run:()=>{hideModal();if(exhausted){endDay(true);return}render();setStatus('돌발상황 해결 완료 · 다음 배달지를 선택하세요.','good')}}])
     }
-    function showRandomEvent(){const event=choose(EVENTS);showModal('돌발 상황',event.title,event.copy,event.choices.map(choice=>({label:choice.label,detail:choice.detail,run:()=>resolveRandomEvent(event,choice)})))}
+    function showRandomEvent(){const event=choose(EVENTS);playEventAlert();if(navigator.vibrate)navigator.vibrate([20,45,25]);showModal('돌발 상황',event.title,event.copy,event.choices.map(choice=>({label:choice.label,detail:choice.detail,run:()=>resolveRandomEvent(event,choice)})))}
     function endDay(auto){
       if(isDelivering)return;
       const hit=state.cash>=100000,summary=`완료한 주문 ${state.completedToday}건 · 남은 체력 ♥ ${Math.max(0,state.energy)}\n총매출 ${money(state.dayGross)} · 비용 ${money(state.dayExpense)}\n오늘 순수익 ${money(state.cash)}`;
